@@ -145,6 +145,7 @@ export const insertMenuItemSchema = createInsertSchema(menuItems).omit({
 
 export const insertOrderSchema = createInsertSchema(orders).omit({
   id: true,
+  orderNumber: true, // Server-generated
   createdAt: true,
   updatedAt: true,
 });

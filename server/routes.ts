@@ -138,8 +138,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Orders
   app.post("/api/orders", async (req, res) => {
     try {
+      console.log("Received order request:", JSON.stringify(req.body, null, 2));
+      
       const orderData = insertOrderSchema.parse(req.body.order);
       const orderItems = z.array(insertOrderItemSchema).parse(req.body.items);
+      
+      console.log("Parsed order data:", orderData);
+      console.log("Parsed order items:", orderItems);
       
       // Create order
       const newOrder = await storage.createOrder(orderData);
@@ -151,7 +156,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(newOrder);
     } catch (error) {
-      res.status(400).json({ error: "Failed to create order" });
+      console.error("Order creation error:", error);
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ 
+          error: "Validation failed", 
+          details: error.errors 
+        });
+      } else {
+        res.status(400).json({ error: "Failed to create order" });
+      }
     }
   });
 
