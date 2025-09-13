@@ -243,6 +243,7 @@ export class MemStorage implements IStorage {
       rating: insertRestaurant.rating ?? 0,
       distance: insertRestaurant.distance ?? null,
       imageUrl: insertRestaurant.imageUrl ?? null,
+      location: insertRestaurant.location ?? null,
       isOpen: insertRestaurant.isOpen ?? true,
       deliveryAvailable: insertRestaurant.deliveryAvailable ?? true,
       takeawayAvailable: insertRestaurant.takeawayAvailable ?? true,
