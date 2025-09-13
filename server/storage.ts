@@ -33,6 +33,7 @@ export interface IStorage {
   createMenuCategory(category: InsertMenuCategory): Promise<MenuCategory>;
   getMenuItems(restaurantId: string): Promise<MenuItem[]>;
   getMenuItemsByCategory(categoryId: string): Promise<MenuItem[]>;
+  getMenuItem(id: string): Promise<MenuItem | undefined>;
   createMenuItem(item: InsertMenuItem): Promise<MenuItem>;
   updateMenuItem(id: string, updates: Partial<MenuItem>): Promise<MenuItem | undefined>;
   deleteMenuItem(id: string): Promise<boolean>;
@@ -283,6 +284,10 @@ export class MemStorage implements IStorage {
     return Array.from(this.menuItems.values()).filter(
       item => item.categoryId === categoryId
     );
+  }
+
+  async getMenuItem(id: string): Promise<MenuItem | undefined> {
+    return this.menuItems.get(id);
   }
 
   async createMenuItem(insertItem: InsertMenuItem): Promise<MenuItem> {
