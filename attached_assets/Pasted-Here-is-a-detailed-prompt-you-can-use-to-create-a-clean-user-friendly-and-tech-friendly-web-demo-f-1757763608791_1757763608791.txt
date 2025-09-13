@@ -1,0 +1,77 @@
+Here is a detailed prompt you can use to create a clean, user-friendly, and tech-friendly web demo for your Tech Park food ordering project, incorporating all the client requirements and developer needs with proper workflow and features for dashboards. This prompt is aimed to guide an AI or design/development tool in building the project:
+
+***
+
+**Prompt for Creating Tech Park Food Ordering Web Demo (React + Firebase + Google Maps):**
+
+Build a **clean, modern, and user-friendly** web application, with no box shadows or hover effects, designed for employees in Bangalore Tech Parks, especially Manyata Tech Park, to order food efficiently and save time during interval breaks. The overall look should be simple, tech-friendly, and food-friendly, with intuitive navigation and real-time data integration.
+
+**Main Features and Workflow:**
+
+1. **Dual Login System:**
+
+   - **Hotel/Mess Manager Login:**  
+     A dedicated login portal for hotel/mess managers to manage their food services.  
+     Functionalities:  
+     - Manage daily or weekly menus with CRUD operations.  
+     - Set item prices, discounts, and special offers dynamically.  
+     - Update order preparation times for each menu item.  
+     - Manage order status updates (order preparing, ready, dispatched).  
+     - Dashboard showing incoming orders with real-time updates.
+
+   - **User Login:**  
+     Employees login with full validation requiring:  
+     - Tech Park name, Company name, Designation, Employee name, and Mobile number.  
+     After login, users should see:  
+     - List or searchable directory of Bangalore Tech Parks (focus on Manyata Tech Park).  
+     - After selection of a tech park, display all available food places (hotels, messes) inside that park with real ratings, distances, and estimated order preparation times. Use **Google Maps API** to fetch and display locations and ratings in realtime.
+
+2. **Food Ordering Flow for Users:**
+
+   - After selecting a food place, users see a dynamic menu fetched from Firebase set by the manager.  
+   - Users can add multiple items to their cart.  
+   - Place order with options: Delivery, Dine-in, or Takeaway.  
+     - If Delivery is selected, add a fixed delivery charge.  
+   - Proceed to a payment screen allowing demo mode payment options (simulate payment success).  
+   - Upon payment completion, provide an order tracking interface showing real-time order status updates, such as:  
+     - Order Preparing → Order Ready → For Dine-in/Takeaway → For Delivery: Delivery Boy Received → Out for Delivery → Delivered.
+
+3. **Real-Time Location Tracking & Integration:**
+
+   - Show Google Maps to track delivery in real time (for delivery option).  
+   - Display the user’s selected tech park and food places on the map.  
+   - Use Firebase for realtime data syncing of menus, orders, and statuses.
+
+4. **Technical Requirements:**
+
+   - Use **React** for frontend with clean component structure and reusable UI parts.  
+   - Use **Firebase** as backend for user authentication, real-time database, and order management.  
+   - Implement all CRUD operations for menu and order management fully functional through Firebase.  
+   - Integrate **Google Maps API** for location display, ratings, and distances from Manyata Tech Park specifically, including adding real restaurants from the area in demo data.  
+   - The design should be minimalistic, flat, no box shadows or hover animations, focused on clarity and ease of use for tech employees on the go.
+
+5. **Dashboard Views:**
+
+   - For Hotel Manager: Menu management + Orders dashboard with status updates.  
+   - For Users: Tech park selection → Food place selection → Menu → Order placing → Payment → Order tracking map.
+
+**Visual & UI Style Guidelines:**
+
+- Flat design, no shadows or hover effects.  
+- Use a modern color palette that reflects tech professionalism yet appeals to food lovers (e.g., cool blues, fresh greens, warm orange/red highlights).  
+- Clean typography, readable fonts, sufficient spacing.  
+- Responsive design for desktop and mobile views.
+
+**Additional Notes:**
+
+- Populate demo with as many real food outlets and messes as possible from Manyata Tech Park using real-time or mock Google Maps data.  
+- Ensure smooth user flow and interaction with proper loading states and error handling.  
+- Demonstrate full end-to-end flow from login, menu browsing to payment and order tracking.
+
+***
+
+This prompt covers the functional, technical, and design aspects of the project tailored for a demo environment, helping you impress the client by showing a realistic and professional solution aligned to their needs. Modify any specific labels or parameters in implementation as required.
+
+If needed, this prompt can be adapted to feed into AI-assisted design tools or given to developers as a comprehensive requirement brief.
+
+Let me know if you want me to help create code snippets or UI component structure as well!
