@@ -1,5 +1,6 @@
-import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useTheme } from '@/hooks/useTheme';
+import { useViewMode } from '@/hooks/useViewMode';
 import { Button } from '@/components/ui/button';
 
 interface LayoutProps {
@@ -8,7 +9,8 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const { user, userType, logout } = useAuth();
-  const [viewMode, setViewMode] = useState<'user' | 'manager'>('user');
+  const { theme, toggleTheme } = useTheme();
+  const { viewMode, setViewMode } = useViewMode();
 
   const handleViewSwitch = (mode: 'user' | 'manager') => {
     setViewMode(mode);
@@ -31,8 +33,19 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </div>
             
-            {/* User/Manager Toggle */}
+            {/* Theme Toggle, User/Manager Toggle and User Info */}
             <div className="flex items-center space-x-4">
+              {/* Theme Toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleTheme}
+                className="w-9 h-9 p-0"
+                data-testid="button-theme-toggle"
+              >
+                <i className={`fas ${theme === 'dark' ? 'fa-sun' : 'fa-moon'} text-lg`}></i>
+              </Button>
+              
               <div className="flex bg-muted rounded-lg p-1">
                 <Button
                   variant={viewMode === 'user' ? 'default' : 'ghost'}

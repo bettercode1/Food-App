@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useViewMode } from '@/hooks/useViewMode';
 import UserLogin from '@/components/UserLogin';
 import ManagerLogin from '@/components/ManagerLogin';
 import TechParkSelection from '@/components/TechParkSelection';
@@ -16,6 +17,7 @@ type UserFlow = 'login' | 'tech-parks' | 'restaurants' | 'menu' | 'cart' | 'paym
 
 export default function Home() {
   const { user, userType } = useAuth();
+  const { viewMode } = useViewMode();
   const { toast } = useToast();
   
   const [userFlow, setUserFlow] = useState<UserFlow>('login');
@@ -176,9 +178,9 @@ export default function Home() {
     }
   };
 
-  // Show appropriate view based on user type and authentication
+  // Show appropriate view based on view mode and authentication
   if (!user) {
-    return userType === 'manager' ? <ManagerLogin /> : <UserLogin />;
+    return viewMode === 'manager' ? <ManagerLogin /> : <UserLogin />;
   }
 
   if (userType === 'manager') {

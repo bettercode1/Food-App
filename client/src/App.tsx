@@ -4,6 +4,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthContext, useAuthState } from "@/hooks/useAuth";
+import { ThemeContext, useThemeState } from "@/hooks/useTheme";
+import { ViewModeContext, useViewModeState } from "@/hooks/useViewMode";
 import Layout from "@/components/Layout";
 import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
@@ -19,17 +21,23 @@ function Router() {
 
 function App() {
   const authState = useAuthState();
+  const themeState = useThemeState();
+  const viewModeState = useViewModeState();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthContext.Provider value={authState}>
-        <TooltipProvider>
-          <Layout>
-            <Toaster />
-            <Router />
-          </Layout>
-        </TooltipProvider>
-      </AuthContext.Provider>
+      <ViewModeContext.Provider value={viewModeState}>
+        <ThemeContext.Provider value={themeState}>
+          <AuthContext.Provider value={authState}>
+            <TooltipProvider>
+              <Layout>
+                <Toaster />
+                <Router />
+              </Layout>
+            </TooltipProvider>
+          </AuthContext.Provider>
+        </ThemeContext.Provider>
+      </ViewModeContext.Provider>
     </QueryClientProvider>
   );
 }
