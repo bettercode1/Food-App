@@ -7,6 +7,15 @@ import { verifyManagerOwnsOrderRestaurant } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // Health check endpoint
+  app.head("/api/health", (_req, res) => {
+    res.status(200).end();
+  });
+
+  app.get("/api/health", (_req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
   // Auth routes
   app.post("/api/auth/user/login", async (req, res) => {
     try {

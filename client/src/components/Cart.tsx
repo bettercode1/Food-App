@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -19,13 +19,23 @@ interface CartProps {
   }) => void;
 }
 
-export default function Cart({ cart, restaurant, onUpdateCart, onProceedToPayment }: CartProps) {
+const Cart = memo(function Cart({ cart, restaurant, onUpdateCart, onProceedToPayment }: CartProps) {
   const [orderType, setOrderType] = useState<'delivery' | 'dine-in' | 'takeaway'>('delivery');
 
-  const subtotal = cart.reduce((sum, item) => sum + (item.menuItem.price * item.quantity), 0);
-  const deliveryCharge = orderType === 'delivery' ? 25 : 0;
-  const gst = Math.round((subtotal + deliveryCharge) * 0.05);
-  const total = subtotal + deliveryCharge + gst;
+  // Memoize expensive calculations
+  const { subtotal, deliveryCharge, gst, total } = useMemo(() => {
+    const sub = cart.reduce((sum, item) => sum + (item.menuItem.price * item.quantity), 0);
+    const delivery = orderType === 'delivery' ? 25 : 0;
+    const tax = Math.round((sub + delivery) * 0.05);
+    const totalAmount = sub + delivery + tax;
+    
+    return { 
+      subtotal: sub, 
+      deliveryCharge: delivery, 
+      gst: tax, 
+      total: totalAmount 
+    };
+  }, [cart, orderType]);
 
   const handleProceedToPayment = () => {
     onProceedToPayment({
@@ -216,4 +226,6 @@ export default function Cart({ cart, restaurant, onUpdateCart, onProceedToPaymen
       </div>
     </div>
   );
-}
+});
+
+export default Cart;

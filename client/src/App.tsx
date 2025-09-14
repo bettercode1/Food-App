@@ -7,6 +7,8 @@ import { AuthContext, useAuthState } from "@/hooks/useAuth";
 import { ThemeContext, useThemeState } from "@/hooks/useTheme";
 import { ViewModeContext, useViewModeState } from "@/hooks/useViewMode";
 import Layout from "@/components/Layout";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import OfflineBanner from "@/components/OfflineBanner";
 import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
 
@@ -25,20 +27,23 @@ function App() {
   const viewModeState = useViewModeState();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ViewModeContext.Provider value={viewModeState}>
-        <ThemeContext.Provider value={themeState}>
-          <AuthContext.Provider value={authState}>
-            <TooltipProvider>
-              <Layout>
-                <Toaster />
-                <Router />
-              </Layout>
-            </TooltipProvider>
-          </AuthContext.Provider>
-        </ThemeContext.Provider>
-      </ViewModeContext.Provider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ViewModeContext.Provider value={viewModeState}>
+          <ThemeContext.Provider value={themeState}>
+            <AuthContext.Provider value={authState}>
+              <TooltipProvider>
+                <OfflineBanner />
+                <Layout>
+                  <Toaster />
+                  <Router />
+                </Layout>
+              </TooltipProvider>
+            </AuthContext.Provider>
+          </ThemeContext.Provider>
+        </ViewModeContext.Provider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
