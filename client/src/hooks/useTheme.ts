@@ -25,7 +25,7 @@ export function useThemeState() {
     // Check for stored theme preference or system preference
     const storedTheme = localStorage.getItem('techpark-theme') as Theme;
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    
+
     const initialTheme = storedTheme || systemTheme;
     setTheme(initialTheme);
     applyTheme(initialTheme);
@@ -56,6 +56,16 @@ export function useThemeState() {
     setTheme: handleSetTheme,
     toggleTheme
   };
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const themeState = useThemeState();
+
+  return (
+    <ThemeContext.Provider value={themeState}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
 export { ThemeContext };
