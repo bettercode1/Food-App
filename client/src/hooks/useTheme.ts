@@ -1,11 +1,10 @@
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 
 type Theme = 'light' | 'dark';
 
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
-  setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -18,44 +17,32 @@ export function useTheme() {
   return context;
 }
 
-export function useThemeState() {
+interface ThemeProviderProps {
+  children: ReactNode;
+}
+
+export function ThemeProvider({ children }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>('light');
 
   useEffect(() => {
-    // Check for stored theme preference or system preference
-    const storedTheme = localStorage.getItem('techpark-theme') as Theme;
-    const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    
-    const initialTheme = storedTheme || systemTheme;
-    setTheme(initialTheme);
-    applyTheme(initialTheme);
+    const savedTheme = localStorage.getItem('techpark-theme') as Theme;
+    if (savedTheme) {
+      setTheme(savedTheme);
+    }
   }, []);
 
-  const applyTheme = (newTheme: Theme) => {
-    const root = document.documentElement;
-    if (newTheme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-  };
-
-  const handleSetTheme = (newTheme: Theme) => {
-    setTheme(newTheme);
-    localStorage.setItem('techpark-theme', newTheme);
-    applyTheme(newTheme);
-  };
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    localStorage.setItem('techpark-theme', theme);
+  }, [theme]);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    handleSetTheme(newTheme);
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  return {
-    theme,
-    setTheme: handleSetTheme,
-    toggleTheme
-  };
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
-
-export { ThemeContext };

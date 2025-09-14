@@ -1,4 +1,5 @@
-import { useState, createContext, useContext } from 'react';
+
+import { useState, createContext, useContext, ReactNode } from 'react';
 
 type ViewMode = 'user' | 'manager';
 
@@ -17,13 +18,16 @@ export function useViewMode() {
   return context;
 }
 
-export function useViewModeState() {
-  const [viewMode, setViewMode] = useState<ViewMode>('user');
-
-  return {
-    viewMode,
-    setViewMode
-  };
+interface ViewModeProviderProps {
+  children: ReactNode;
 }
 
-export { ViewModeContext };
+export function ViewModeProvider({ children }: ViewModeProviderProps) {
+  const [viewMode, setViewMode] = useState<ViewMode>('user');
+
+  return (
+    <ViewModeContext.Provider value={{ viewMode, setViewMode }}>
+      {children}
+    </ViewModeContext.Provider>
+  );
+}

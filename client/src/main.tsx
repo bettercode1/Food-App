@@ -1,5 +1,37 @@
-import { createRoot } from "react-dom/client";
-import App from "./App";
-import "./index.css";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from '@/components/ui/toaster';
+import { AuthContext, useAuthState } from '@/hooks/useAuth';
+import { ThemeProvider } from '@/hooks/useTheme';
+import { ViewModeProvider } from '@/hooks/useViewMode';
+import App from './App.tsx';
+import './index.css';
 
-createRoot(document.getElementById("root")!).render(<App />);
+const queryClient = new QueryClient();
+
+function AppProviders() {
+  const authState = useAuthState();
+
+  return (
+    <AuthContext.Provider value={authState}>
+      <ThemeProvider>
+        <ViewModeProvider>
+          <App />
+        </ViewModeProvider>
+      </ThemeProvider>
+    </AuthContext.Provider>
+  );
+}
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AppProviders />
+        <Toaster />
+      </TooltipProvider>
+    </QueryClientProvider>
+  </StrictMode>,
+);
