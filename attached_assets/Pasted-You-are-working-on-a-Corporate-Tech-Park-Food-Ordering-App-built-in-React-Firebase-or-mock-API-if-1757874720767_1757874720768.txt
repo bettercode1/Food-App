@@ -1,0 +1,63 @@
+You are working on a Corporate Tech Park Food Ordering App built in React + Firebase (or mock API if Firebase is limited in Replit). The core flows (auth, restaurant selection, menu, cart, orders, and manager dashboard) are working. Now implement the following final enhancements in one go:
+
+1. AUTHENTICATION & ROLE-BASED FLOW
+   - Fix Register & Login pages so roles (Employee/User vs Manager) are handled properly.
+   - At registration, users select whether they are an "Employee" or a "Manager."
+   - Show proper redirected dashboards:
+      - Employee → Tech Park Selection → Restaurants → Menu → Cart → Orders
+      - Manager → Manager Dashboard (order management, menu management, inventory demo)
+
+2. DEMO DATA (Should look realistic for Manyata Tech Park demo)
+   - Add demo restaurants inside "Manyata Tech Park":
+      - "Canteen Delight" (simple thali items)
+      - "North Spice Dhaba" (north Indian sabji, roti, dal, rice)
+      - "South Express" (idli, dosa, sambar varieties)
+      - "Quick Bites Cafe" (sandwiches, burgers, shakes)
+   - Menus should include realistic food items with prices, like:
+      - Roti ₹15, Paneer Butter Masala ₹120, Dal Tadka ₹100, Rice ₹80, Masala Dosa ₹60, Idli-Sambar ₹50, Veg Burger ₹90, Cold Coffee ₹70.
+   - Add Food Images for each menu item (use any royalty-free placeholder image links).
+   - Add restaurant logos or icons to match the theme.
+   - Demo orders should exist for both employees and managers so flows look functional.
+
+3. UI/UX FIXES
+   - Check all content visibility in both light and dark themes. Adjust colors for contrast so data is always visible.
+   - Add small icons for each section wherever needed:
+      - Cart → Shopping cart icon
+      - Restaurants → Restaurant icon
+      - Orders → Delivery/track icons
+      - Manager tools → Analytics, inventory icons
+   - Update styling so everything matches a clean, modern corporate app look.
+
+4. ADD FEATURES FROM LEFTOVER IMPLEMENTATION
+   - Order Tracking Component: Show simple real-time updates (simulated inside Replit local environment since WebSocket limitations exist). For demo, auto-progress order status: "Received → Preparing → Out for Delivery → Delivered."
+   - Manager Dashboard: Allow managers to update status (buttons to change order status directly).
+   - Live Delivery Tracking: Show Google Maps placeholder if live GPS cannot work in Replit free version. Simulate coordinates shifting with a mock driver route for demo orders.
+   - Payment: Keep simulation but improve UI. Show “Pay Now” button → success or failure simulation. Add remarks for integration if connected later.
+   - Order History & Profile: Employees can see their past orders and re-order favorite meals.
+   - Notifications: For demo, add in-app popups (toast) when order status updates. Also show a small "🔔" notification icon in header.
+
+5. ERROR HANDLING & PERFORMANCE DEMO
+   - Add proper error messages when login/registration fails.
+   - Add try/catch handling in API calls.
+   - Lazy load menu images.
+   - Show "offline mode" banner if fetch fails.
+
+6. DEMO FLOWS
+   - Employee Demo: 
+     - Login as employee → Select Manyata Tech Park → Choose "North Spice Dhaba" → Add Dal Tadka + Roti to cart → Place order → See tracking flow "Preparing → Out for delivery."
+   - Manager Demo:
+     - Login as manager (demo account) → See pending orders from "North Spice Dhaba" → Update an order status to test flow → Inventory and Analytics tabs should show dummy data (e.g., "Roti stock: 50 left today", "Most ordered dish: Masala Dosa").
+   - Show realistic demo order data as if created by employees in that Tech Park.
+
+7. OTHER INSTRUCTIONS
+   - Do not connect to any Replit deployment or external files. Keep everything local inside the project folder.
+   - Provide all demo JSON data inline (restaurants, menu items, sample orders, sample users).
+   - Ensure after your changes, the project is fully runnable on user’s own device from Replit clone without linking anything externally.
+   - Make sure all sample text/content is real, visible, and theme-consistent for a professional product demo.
+
+Now, based on these requirements:
+- Implement the fixes and UI updates.
+- Insert realistic demo data in menus, restaurants, users, and orders.
+- Show working employee and manager flows with icons/images.
+- Keep code well-organized and readable.
+- Ensure final output feels like a real food ordering app for Manyata Tech Park demo presentation.
