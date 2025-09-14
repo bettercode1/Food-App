@@ -74,86 +74,273 @@ export class MemStorage implements IStorage {
     };
     this.techParks.set(manyataPark.id, manyataPark);
 
-    // Seed sample manager
-    const managerId = randomUUID();
-    const sampleManager: Manager = {
-      id: managerId,
-      username: "manager@spicegarden.com",
-      password: "password123", // In production, this should be hashed
-      restaurantName: "Spice Garden",
-      email: "manager@spicegarden.com",
-      techPark: manyataPark.name,
-      isActive: true,
-      createdAt: new Date(),
-    };
-    this.managers.set(managerId, sampleManager);
-
-    // Seed restaurants
-    const restaurantId = randomUUID();
-    const spiceGarden: Restaurant = {
-      id: restaurantId,
-      managerId: managerId,
-      techParkId: manyataPark.id,
-      name: "Spice Garden",
-      description: "North Indian • Chinese • Continental",
-      cuisine: "North Indian, Chinese, Continental",
-      rating: 4.5,
-      distance: 150,
-      preparationTime: "15-20 min",
-      priceRange: "₹₹",
-      isOpen: true,
-      deliveryAvailable: true,
-      takeawayAvailable: true,
-      dineinAvailable: true,
-      imageUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
-      location: { lat: 13.0389, lng: 77.6244 },
-      createdAt: new Date(),
-    };
-    this.restaurants.set(restaurantId, spiceGarden);
-
-    // Seed menu categories
-    const mainCourseId = randomUUID();
-    const mainCourse: MenuCategory = {
-      id: mainCourseId,
-      restaurantId: restaurantId,
-      name: "Main Course",
-      displayOrder: 1,
-      isActive: true,
-    };
-    this.menuCategories.set(mainCourseId, mainCourse);
-
-    // Seed menu items
-    const menuItemsData = [
+    // Seed Demo Users
+    const demoUsers = [
       {
         id: randomUUID(),
-        name: "Butter Chicken",
-        description: "Creamy tomato-based chicken curry with aromatic spices",
-        price: 285,
-        isVeg: false,
-        preparationTime: 20,
-        imageUrl: "https://images.unsplash.com/photo-1565557623262-b51c2513a641"
+        username: "9876543210",
+        password: "demo123",
+        techPark: manyataPark.name,
+        company: "TechCorp Solutions",
+        designation: "Software Engineer",
+        employeeName: "Arjun Kumar",
+        mobile: "9876543210",
+        createdAt: new Date(),
       },
       {
         id: randomUUID(),
-        name: "Paneer Tikka Masala",
-        description: "Grilled cottage cheese in rich tomato gravy",
-        price: 245,
-        isVeg: true,
-        preparationTime: 18,
-        imageUrl: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7"
+        username: "9876543211",
+        password: "demo123",
+        techPark: manyataPark.name,
+        company: "DataFlow Systems",
+        designation: "Product Manager",
+        employeeName: "Priya Sharma",
+        mobile: "9876543211",
+        createdAt: new Date(),
       }
     ];
 
-    menuItemsData.forEach(item => {
-      const menuItem: MenuItem = {
-        ...item,
-        restaurantId: restaurantId,
-        categoryId: mainCourseId,
-        isAvailable: true,
+    demoUsers.forEach(user => {
+      this.users.set(user.id, user);
+    });
+
+    // Seed Demo Managers and Restaurants
+    const restaurantsData = [
+      {
+        managerInfo: {
+          username: "manager@canteendelight.com",
+          password: "password123",
+          restaurantName: "Canteen Delight",
+          email: "manager@canteendelight.com",
+          techPark: manyataPark.name,
+        },
+        restaurantInfo: {
+          name: "Canteen Delight",
+          description: "Traditional Indian thali and comfort food",
+          cuisine: "Indian, Regional",
+          rating: 4.3,
+          distance: 120,
+          preparationTime: "10-15 min",
+          priceRange: "₹",
+          imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d",
+          location: { lat: 13.0389, lng: 77.6245 },
+        },
+        categories: [
+          { name: "Thali", displayOrder: 1 },
+          { name: "Rice & Dal", displayOrder: 2 }
+        ],
+        menuItems: [
+          { categoryIndex: 0, name: "Veg Thali", description: "Complete meal with rice, dal, sabji, roti, and pickle", price: 80, isVeg: true, preparationTime: 10, imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d" },
+          { categoryIndex: 0, name: "Non-Veg Thali", description: "Complete meal with chicken curry, rice, dal, and roti", price: 120, isVeg: false, preparationTime: 15, imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b" },
+          { categoryIndex: 1, name: "Plain Rice", description: "Steamed basmati rice", price: 40, isVeg: true, preparationTime: 5, imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c" },
+          { categoryIndex: 1, name: "Dal Tadka", description: "Yellow lentils tempered with cumin and spices", price: 60, isVeg: true, preparationTime: 10, imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d" }
+        ]
+      },
+      {
+        managerInfo: {
+          username: "manager@northspice.com",
+          password: "password123",
+          restaurantName: "North Spice Dhaba",
+          email: "manager@northspice.com",
+          techPark: manyataPark.name,
+        },
+        restaurantInfo: {
+          name: "North Spice Dhaba",
+          description: "Authentic North Indian cuisine and fresh rotis",
+          cuisine: "North Indian, Punjabi",
+          rating: 4.6,
+          distance: 180,
+          preparationTime: "15-20 min",
+          priceRange: "₹₹",
+          imageUrl: "https://images.unsplash.com/photo-1565557623262-b51c2513a641",
+          location: { lat: 13.0390, lng: 77.6243 },
+        },
+        categories: [
+          { name: "Breads", displayOrder: 1 },
+          { name: "Curries", displayOrder: 2 },
+          { name: "Rice", displayOrder: 3 }
+        ],
+        menuItems: [
+          { categoryIndex: 0, name: "Roti", description: "Fresh wheat bread cooked on tawa", price: 15, isVeg: true, preparationTime: 5, imageUrl: "https://images.unsplash.com/photo-1574653892320-2d3f7e1b8ceb" },
+          { categoryIndex: 0, name: "Butter Naan", description: "Leavened bread with butter", price: 25, isVeg: true, preparationTime: 8, imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b" },
+          { categoryIndex: 1, name: "Paneer Butter Masala", description: "Cottage cheese in rich tomato gravy", price: 120, isVeg: true, preparationTime: 15, imageUrl: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7" },
+          { categoryIndex: 1, name: "Dal Tadka", description: "Yellow lentils with tempering", price: 100, isVeg: true, preparationTime: 12, imageUrl: "https://images.unsplash.com/photo-1546833999-b9f581a1996d" },
+          { categoryIndex: 1, name: "Chicken Curry", description: "Traditional North Indian chicken curry", price: 160, isVeg: false, preparationTime: 20, imageUrl: "https://images.unsplash.com/photo-1565557623262-b51c2513a641" },
+          { categoryIndex: 2, name: "Basmati Rice", description: "Aromatic long grain rice", price: 80, isVeg: true, preparationTime: 10, imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c" }
+        ]
+      },
+      {
+        managerInfo: {
+          username: "manager@southexpress.com",
+          password: "password123",
+          restaurantName: "South Express",
+          email: "manager@southexpress.com",
+          techPark: manyataPark.name,
+        },
+        restaurantInfo: {
+          name: "South Express",
+          description: "Authentic South Indian breakfast and meals",
+          cuisine: "South Indian, Tamil, Karnataka",
+          rating: 4.4,
+          distance: 200,
+          preparationTime: "12-18 min",
+          priceRange: "₹",
+          imageUrl: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8",
+          location: { lat: 13.0388, lng: 77.6246 },
+        },
+        categories: [
+          { name: "Dosas", displayOrder: 1 },
+          { name: "Idli & Vada", displayOrder: 2 },
+          { name: "Rice Items", displayOrder: 3 }
+        ],
+        menuItems: [
+          { categoryIndex: 0, name: "Masala Dosa", description: "Crispy crepe with spiced potato filling", price: 60, isVeg: true, preparationTime: 15, imageUrl: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8" },
+          { categoryIndex: 0, name: "Plain Dosa", description: "Crispy rice and lentil crepe", price: 45, isVeg: true, preparationTime: 12, imageUrl: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8" },
+          { categoryIndex: 0, name: "Rava Dosa", description: "Crispy semolina dosa with onions", price: 70, isVeg: true, preparationTime: 18, imageUrl: "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8" },
+          { categoryIndex: 1, name: "Idli Sambar", description: "Steamed rice cakes with lentil curry", price: 50, isVeg: true, preparationTime: 10, imageUrl: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc" },
+          { categoryIndex: 1, name: "Medu Vada", description: "Crispy lentil donuts", price: 40, isVeg: true, preparationTime: 12, imageUrl: "https://images.unsplash.com/photo-1589301760014-d929f3979dbc" },
+          { categoryIndex: 2, name: "Curd Rice", description: "Rice with yogurt and tempering", price: 55, isVeg: true, preparationTime: 8, imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c" }
+        ]
+      },
+      {
+        managerInfo: {
+          username: "manager@quickbites.com",
+          password: "password123",
+          restaurantName: "Quick Bites Cafe",
+          email: "manager@quickbites.com",
+          techPark: manyataPark.name,
+        },
+        restaurantInfo: {
+          name: "Quick Bites Cafe",
+          description: "Fast food, sandwiches, burgers and refreshing drinks",
+          cuisine: "Continental, Fast Food, Beverages",
+          rating: 4.2,
+          distance: 100,
+          preparationTime: "8-15 min",
+          priceRange: "₹₹",
+          imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b",
+          location: { lat: 13.0391, lng: 77.6242 },
+        },
+        categories: [
+          { name: "Sandwiches", displayOrder: 1 },
+          { name: "Burgers", displayOrder: 2 },
+          { name: "Beverages", displayOrder: 3 }
+        ],
+        menuItems: [
+          { categoryIndex: 0, name: "Club Sandwich", description: "Triple layer sandwich with chicken and vegetables", price: 85, isVeg: false, preparationTime: 12, imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b" },
+          { categoryIndex: 0, name: "Veg Grilled Sandwich", description: "Grilled sandwich with mixed vegetables", price: 70, isVeg: true, preparationTime: 10, imageUrl: "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b" },
+          { categoryIndex: 1, name: "Veg Burger", description: "Crispy veggie patty with fresh vegetables", price: 90, isVeg: true, preparationTime: 15, imageUrl: "https://images.unsplash.com/photo-1571091718767-18b5b1457add" },
+          { categoryIndex: 1, name: "Chicken Burger", description: "Grilled chicken patty with cheese and lettuce", price: 120, isVeg: false, preparationTime: 18, imageUrl: "https://images.unsplash.com/photo-1571091718767-18b5b1457add" },
+          { categoryIndex: 2, name: "Cold Coffee", description: "Chilled coffee with ice cream", price: 70, isVeg: true, preparationTime: 5, imageUrl: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735" },
+          { categoryIndex: 2, name: "Fresh Lime Water", description: "Refreshing lime juice with mint", price: 40, isVeg: true, preparationTime: 3, imageUrl: "https://images.unsplash.com/photo-1544145945-f90425340c7e" },
+          { categoryIndex: 2, name: "Mango Shake", description: "Thick mango milkshake", price: 80, isVeg: true, preparationTime: 5, imageUrl: "https://images.unsplash.com/photo-1544145945-f90425340c7e" }
+        ]
+      }
+    ];
+
+    // Create all restaurants with their managers and menu items
+    restaurantsData.forEach(data => {
+      // Create manager
+      const managerId = randomUUID();
+      const manager: Manager = {
+        id: managerId,
+        ...data.managerInfo,
+        isActive: true,
         createdAt: new Date(),
       };
-      this.menuItems.set(item.id, menuItem);
+      this.managers.set(managerId, manager);
+
+      // Create restaurant
+      const restaurantId = randomUUID();
+      const restaurant: Restaurant = {
+        id: restaurantId,
+        managerId: managerId,
+        techParkId: manyataPark.id,
+        ...data.restaurantInfo,
+        isOpen: true,
+        deliveryAvailable: true,
+        takeawayAvailable: true,
+        dineinAvailable: true,
+        createdAt: new Date(),
+      };
+      this.restaurants.set(restaurantId, restaurant);
+
+      // Create menu categories
+      const categoryIds: string[] = [];
+      data.categories.forEach(category => {
+        const categoryId = randomUUID();
+        const menuCategory: MenuCategory = {
+          id: categoryId,
+          restaurantId: restaurantId,
+          name: category.name,
+          displayOrder: category.displayOrder,
+          isActive: true,
+        };
+        this.menuCategories.set(categoryId, menuCategory);
+        categoryIds.push(categoryId);
+      });
+
+      // Create menu items
+      data.menuItems.forEach(item => {
+        const menuItemId = randomUUID();
+        const menuItem: MenuItem = {
+          id: menuItemId,
+          restaurantId: restaurantId,
+          categoryId: categoryIds[item.categoryIndex],
+          name: item.name,
+          description: item.description,
+          price: item.price,
+          isVeg: item.isVeg,
+          isAvailable: true,
+          preparationTime: item.preparationTime,
+          imageUrl: item.imageUrl,
+          createdAt: new Date(),
+        };
+        this.menuItems.set(menuItemId, menuItem);
+      });
     });
+
+    // Seed some demo orders for the demo flows
+    const firstUser = demoUsers[0];
+    const firstRestaurant = Array.from(this.restaurants.values())[0];
+    const firstMenuItem = Array.from(this.menuItems.values()).find(item => item.restaurantId === firstRestaurant.id);
+
+    if (firstUser && firstRestaurant && firstMenuItem) {
+      // Create a demo order
+      const demoOrderId = randomUUID();
+      const demoOrder: Order = {
+        id: demoOrderId,
+        orderNumber: `ORD-2025-1001`,
+        userId: firstUser.id,
+        restaurantId: firstRestaurant.id,
+        orderType: 'delivery',
+        status: 'preparing',
+        subtotal: 120,
+        deliveryCharge: 20,
+        gst: 14,
+        total: 154,
+        paymentMethod: 'upi',
+        paymentStatus: 'completed',
+        deliveryAddress: 'Block A, Office 204, Manyata Tech Park',
+        estimatedTime: '15-20 min',
+        actualDeliveryTime: null,
+        createdAt: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
+        updatedAt: new Date(),
+      };
+      this.orders.set(demoOrderId, demoOrder);
+
+      // Create order item
+      const orderItemId = randomUUID();
+      const orderItem: OrderItem = {
+        id: orderItemId,
+        orderId: demoOrderId,
+        menuItemId: firstMenuItem.id,
+        quantity: 1,
+        price: firstMenuItem.price,
+        total: firstMenuItem.price,
+      };
+      this.orderItems.set(orderItemId, orderItem);
+    }
   }
 
   // User operations
@@ -248,7 +435,9 @@ export class MemStorage implements IStorage {
       isOpen: insertRestaurant.isOpen ?? true,
       deliveryAvailable: insertRestaurant.deliveryAvailable ?? true,
       takeawayAvailable: insertRestaurant.takeawayAvailable ?? true,
-      dineinAvailable: insertRestaurant.dineinAvailable ?? true
+      dineinAvailable: insertRestaurant.dineinAvailable ?? true,
+      preparationTime: insertRestaurant.preparationTime ?? null,
+      priceRange: insertRestaurant.priceRange ?? null
     };
     this.restaurants.set(id, restaurant);
     return restaurant;
