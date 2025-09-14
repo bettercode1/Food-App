@@ -19,11 +19,37 @@ const orderStatuses = [
 
 export default function OrderTracking({ order }: OrderTrackingProps) {
   const [currentStatusIndex, setCurrentStatusIndex] = useState(0);
+  const [simulatedProgress, setSimulatedProgress] = useState(0);
+  const [estimatedTime, setEstimatedTime] = useState('15-20 min');
 
   useEffect(() => {
     const statusIndex = orderStatuses.findIndex(status => status.key === order.status);
     setCurrentStatusIndex(statusIndex >= 0 ? statusIndex : 0);
   }, [order.status]);
+
+  // Simulate real-time order progression for demo
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSimulatedProgress(prev => {
+        // Auto-progress through statuses for demo
+        if (prev < orderStatuses.length - 1) {
+          const nextIndex = Math.min(prev + 1, orderStatuses.length - 1);
+          
+          // Update estimated time based on progress
+          const timeRemaining = Math.max(1, 20 - (nextIndex * 4));
+          setEstimatedTime(`${timeRemaining}-${timeRemaining + 5} min`);
+          
+          return nextIndex;
+        }
+        return prev;
+      });
+    }, 30000); // Progress every 30 seconds for demo
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Use simulated progress for demo, fallback to actual order status
+  const displayStatusIndex = Math.max(currentStatusIndex, simulatedProgress);
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -46,8 +72,8 @@ export default function OrderTracking({ order }: OrderTrackingProps) {
           <CardContent>
             <div className="space-y-6">
               {orderStatuses.map((status, index) => {
-                const isCompleted = index <= currentStatusIndex;
-                const isCurrent = index === currentStatusIndex;
+                const isCompleted = index <= displayStatusIndex;
+                const isCurrent = index === displayStatusIndex;
                 
                 return (
                   <div key={status.key} className="flex items-center space-x-4">
@@ -112,7 +138,7 @@ export default function OrderTracking({ order }: OrderTrackingProps) {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Estimated Time</span>
                     <span className="text-sm font-medium text-chart-2" data-testid="text-estimated-time">
-                      {order.estimatedTime || '20 minutes'}
+                      {estimatedTime}
                     </span>
                   </div>
                 </div>

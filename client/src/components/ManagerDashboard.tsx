@@ -295,10 +295,164 @@ export default function ManagerDashboard() {
         </TabsContent>
 
         <TabsContent value="menu" className="space-y-6">
-          <div className="text-center py-12">
-            <i className="fas fa-utensils text-4xl text-muted-foreground mb-4"></i>
-            <h3 className="text-lg font-semibold text-foreground mb-2">Menu Management</h3>
-            <p className="text-muted-foreground">Menu management features will be available soon.</p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Current Menu Items */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center">
+                    <i className="fas fa-list-ul mr-2 text-primary"></i>
+                    Current Menu
+                  </CardTitle>
+                  <Button size="sm" variant="outline">
+                    <i className="fas fa-plus mr-2"></i>
+                    Add Item
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                        <i className="fas fa-seedling text-chart-2"></i>
+                      </div>
+                      <div>
+                        <h4 className="font-medium">Paneer Butter Masala</h4>
+                        <p className="text-sm text-muted-foreground">₹120 • Available</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="outline" className="bg-chart-2/10 text-chart-2">
+                        <i className="fas fa-eye mr-1"></i>
+                        Active
+                      </Badge>
+                      <Button size="sm" variant="ghost">
+                        <i className="fas fa-edit"></i>
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 border rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                        <i className="fas fa-bread-slice text-chart-3"></i>
+                      </div>
+                      <div>
+                        <h4 className="font-medium">Butter Naan</h4>
+                        <p className="text-sm text-muted-foreground">₹25 • Available</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="outline" className="bg-chart-2/10 text-chart-2">
+                        <i className="fas fa-eye mr-1"></i>
+                        Active
+                      </Badge>
+                      <Button size="sm" variant="ghost">
+                        <i className="fas fa-edit"></i>
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 border rounded-lg opacity-60">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+                        <i className="fas fa-drumstick-bite text-chart-5"></i>
+                      </div>
+                      <div>
+                        <h4 className="font-medium">Chicken Curry</h4>
+                        <p className="text-sm text-muted-foreground">₹160 • Out of Stock</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="secondary">
+                        <i className="fas fa-eye-slash mr-1"></i>
+                        Inactive
+                      </Badge>
+                      <Button size="sm" variant="ghost">
+                        <i className="fas fa-edit"></i>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Inventory Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center">
+                  <i className="fas fa-warehouse mr-2 text-primary"></i>
+                  Inventory Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-chart-2/5 border border-chart-2/20 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <i className="fas fa-bread-slice text-2xl text-chart-2"></i>
+                      <div>
+                        <h4 className="font-medium">Roti/Naan</h4>
+                        <p className="text-sm text-muted-foreground">Wheat flour stock</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-chart-2">85</div>
+                      <div className="text-xs text-muted-foreground">units left</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-chart-3/5 border border-chart-3/20 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <i className="fas fa-cheese text-2xl text-chart-3"></i>
+                      <div>
+                        <h4 className="font-medium">Paneer</h4>
+                        <p className="text-sm text-muted-foreground">Fresh cottage cheese</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-chart-3">12</div>
+                      <div className="text-xs text-muted-foreground">kg left</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <i className="fas fa-drumstick-bite text-2xl text-destructive"></i>
+                      <div>
+                        <h4 className="font-medium">Chicken</h4>
+                        <p className="text-sm text-muted-foreground">Fresh chicken cuts</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-destructive">0</div>
+                      <div className="text-xs text-muted-foreground">kg left</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 bg-chart-1/5 border border-chart-1/20 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <i className="fas fa-seedling text-2xl text-chart-1"></i>
+                      <div>
+                        <h4 className="font-medium">Vegetables</h4>
+                        <p className="text-sm text-muted-foreground">Mixed vegetables</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-chart-1">28</div>
+                      <div className="text-xs text-muted-foreground">kg left</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="pt-4 border-t">
+                  <Button className="w-full" variant="outline">
+                    <i className="fas fa-plus mr-2"></i>
+                    Update Inventory
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </TabsContent>
 
@@ -341,7 +495,10 @@ export default function ManagerDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Order Types Distribution</CardTitle>
+                <CardTitle className="flex items-center">
+                  <i className="fas fa-chart-pie mr-2 text-primary"></i>
+                  Order Types Distribution
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -351,7 +508,13 @@ export default function ManagerDashboard() {
                     
                     return (
                       <div key={type} className="flex items-center justify-between">
-                        <span className="text-muted-foreground capitalize">{type}</span>
+                        <div className="flex items-center space-x-2">
+                          <i className={`fas ${
+                            type === 'delivery' ? 'fa-truck' : 
+                            type === 'dine-in' ? 'fa-utensils' : 'fa-shopping-bag'
+                          } text-primary`}></i>
+                          <span className="text-muted-foreground capitalize">{type}</span>
+                        </div>
                         <span className="text-foreground font-medium">
                           {typeOrders.length} ({percentage}%)
                         </span>
@@ -364,29 +527,65 @@ export default function ManagerDashboard() {
             
             <Card>
               <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
+                <CardTitle className="flex items-center">
+                  <i className="fas fa-star mr-2 text-primary"></i>
+                  Popular Items & Activity
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {orders?.slice(0, 5).map((order) => (
-                    <div key={order.id} className="flex items-center justify-between">
-                      <div>
-                        <span className="text-sm font-medium">{order.orderNumber}</span>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(order.createdAt!).toLocaleString()}
-                        </p>
+                <div className="space-y-4">
+                  {/* Popular Items Section */}
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Most Ordered Today</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-2 bg-chart-2/10 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <i className="fas fa-medal text-chart-2"></i>
+                          <span className="font-medium">Masala Dosa</span>
+                        </div>
+                        <span className="text-sm text-chart-2 font-medium">8 orders</span>
                       </div>
-                      <Badge 
-                        variant={
-                          order.status === 'delivered' ? 'default' :
-                          order.status === 'preparing' ? 'secondary' :
-                          'outline'
-                        }
-                      >
-                        {order.status}
-                      </Badge>
+                      <div className="flex items-center justify-between p-2 bg-chart-3/10 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <i className="fas fa-award text-chart-3"></i>
+                          <span className="font-medium">Paneer Butter Masala</span>
+                        </div>
+                        <span className="text-sm text-chart-3 font-medium">6 orders</span>
+                      </div>
+                      <div className="flex items-center justify-between p-2 bg-chart-1/10 rounded-lg">
+                        <div className="flex items-center space-x-2">
+                          <i className="fas fa-trophy text-chart-1"></i>
+                          <span className="font-medium">Cold Coffee</span>
+                        </div>
+                        <span className="text-sm text-chart-1 font-medium">5 orders</span>
+                      </div>
                     </div>
-                  )) || []}
+                  </div>
+                  
+                  <div className="border-t pt-3">
+                    <h4 className="text-sm font-medium text-muted-foreground mb-3">Recent Activity</h4>
+                    <div className="space-y-2">
+                      {orders?.slice(0, 3).map((order) => (
+                        <div key={order.id} className="flex items-center justify-between">
+                          <div>
+                            <span className="text-sm font-medium">{order.orderNumber}</span>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(order.createdAt!).toLocaleTimeString()}
+                            </p>
+                          </div>
+                          <Badge 
+                            variant={
+                              order.status === 'delivered' ? 'default' :
+                              order.status === 'preparing' ? 'secondary' :
+                              'outline'
+                            }
+                          >
+                            {order.status}
+                          </Badge>
+                        </div>
+                      )) || []}
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
