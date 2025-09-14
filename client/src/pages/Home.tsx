@@ -7,6 +7,7 @@ import TechParkSelection from '@/components/TechParkSelection';
 import FoodPlaces from '@/components/FoodPlaces';
 import RestaurantMenu from '@/components/RestaurantMenu';
 import Cart from '@/components/Cart';
+import Payment from '@/components/Payment';
 import OrderTracking from '@/components/OrderTracking';
 import ManagerDashboard from '@/components/ManagerDashboard';
 import type { TechPark, Restaurant, CartItem, MenuItem, Order, User } from '@/types';
@@ -118,11 +119,10 @@ export default function Home() {
 
   const handleProceedToPayment = (orderData: any) => {
     setPaymentData(orderData);
-    // Simulate payment processing and create order
-    handlePaymentConfirm();
+    setUserFlow('payment');
   };
 
-  const handlePaymentConfirm = async () => {
+  const handlePaymentConfirm = async (paymentMethod: string) => {
     if (!user || !selectedRestaurant || cart.length === 0 || !paymentData) {
       toast({
         variant: 'destructive',
@@ -149,7 +149,7 @@ export default function Home() {
           deliveryCharge: paymentData.deliveryCharge,
           gst: paymentData.gst,
           total: paymentData.total,
-          paymentMethod: 'upi',
+          paymentMethod: paymentMethod,
           paymentStatus: 'completed',
           deliveryAddress: paymentData.orderType === 'delivery' ? 'Block A, Office 204' : null,
           estimatedTime: selectedRestaurant.preparationTime,
@@ -176,6 +176,10 @@ export default function Home() {
         description: error.message || 'Failed to place order. Please try again.',
       });
     }
+  };
+
+  const handleBackToCart = () => {
+    setUserFlow('cart');
   };
 
   // Show appropriate view based on view mode and authentication
@@ -217,6 +221,16 @@ export default function Home() {
           restaurant={selectedRestaurant}
           onUpdateCart={handleUpdateCartById}
           onProceedToPayment={handleProceedToPayment}
+        />
+      ) : <TechParkSelection onSelectPark={handleSelectPark} />;
+    
+    case 'payment':
+      return selectedRestaurant && paymentData ? (
+        <Payment
+          orderData={paymentData}
+          restaurant={selectedRestaurant}
+          onPaymentConfirm={handlePaymentConfirm}
+          onBack={handleBackToCart}
         />
       ) : <TechParkSelection onSelectPark={handleSelectPark} />;
     
