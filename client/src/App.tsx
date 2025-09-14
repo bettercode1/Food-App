@@ -1,48 +1,44 @@
-import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthContext, useAuthState } from "@/hooks/useAuth";
-import { ThemeContext, useThemeState } from "@/hooks/useTheme";
-import { ViewModeContext, useViewModeState } from "@/hooks/useViewMode";
-import Layout from "@/components/Layout";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import OfflineBanner from "@/components/OfflineBanner";
-import Home from "@/pages/Home";
-import NotFound from "@/pages/not-found";
 
-function Router() {
-  return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
+import { Route, Switch } from 'wouter';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import NotFound from './pages/not-found';
+import UserLogin from './components/UserLogin';
+import ManagerLogin from './components/ManagerLogin';
+import ManagerDashboard from './components/ManagerDashboard';
+import NotificationCenter from './components/NotificationCenter';
+import OfflineBanner from './components/OfflineBanner';
+import ErrorBoundary from './components/ErrorBoundary';
+import { useAuth } from './hooks/useAuth';
 
 function App() {
-  const authState = useAuthState();
-  const themeState = useThemeState();
-  const viewModeState = useViewModeState();
+  const { user, userType } = useAuth();
 
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <ViewModeContext.Provider value={viewModeState}>
-          <ThemeContext.Provider value={themeState}>
-            <AuthContext.Provider value={authState}>
-              <TooltipProvider>
-                <OfflineBanner />
-                <Layout>
-                  <Toaster />
-                  <Router />
-                </Layout>
-              </TooltipProvider>
-            </AuthContext.Provider>
-          </ThemeContext.Provider>
-        </ViewModeContext.Provider>
-      </QueryClientProvider>
+      <Layout>
+        <OfflineBanner />
+        <NotificationCenter />
+        <main className="flex-1">
+          <Switch>
+            <Route path="/login">
+              {user ? <Home /> : <UserLogin />}
+            </Route>
+            <Route path="/manager/login">
+              {user && userType === 'manager' ? <ManagerDashboard /> : <ManagerLogin />}
+            </Route>
+            <Route path="/manager/dashboard">
+              {user && userType === 'manager' ? <ManagerDashboard /> : <ManagerLogin />}
+            </Route>
+            <Route path="/">
+              {user ? <Home /> : <UserLogin />}
+            </Route>
+            <Route>
+              <NotFound />
+            </Route>
+          </Switch>
+        </main>
+      </Layout>
     </ErrorBoundary>
   );
 }

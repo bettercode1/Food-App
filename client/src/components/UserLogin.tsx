@@ -1,172 +1,306 @@
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
-import { useAuth } from '@/hooks/useAuth';
-import type { User } from '@/types';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { useAuth } from '../hooks/useAuth';
+import { useLocation } from 'wouter';
+import { useToast } from '../hooks/use-toast';
 
-const userLoginSchema = z.object({
-  techPark: z.string().min(1, 'Tech Park is required'),
+const loginSchema = z.object({
+  mobile: z.string().min(10, 'Mobile number must be 10 digits'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+});
+
+const registerSchema = z.object({
+  techPark: z.string().min(1, 'Tech park is required'),
   company: z.string().min(1, 'Company name is required'),
   designation: z.string().min(1, 'Designation is required'),
   employeeName: z.string().min(1, 'Employee name is required'),
-  mobile: z.string().min(10, 'Valid mobile number is required'),
+  mobile: z.string().min(10, 'Mobile number must be 10 digits'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  role: z.enum(['employee', 'manager'], {
+    required_error: 'Please select your role',
+  }),
 });
 
-type UserLoginForm = z.infer<typeof userLoginSchema>;
-
 export default function UserLogin() {
+  const [isLogin, setIsLogin] = useState(true);
   const { login } = useAuth();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<UserLoginForm>({
-    resolver: zodResolver(userLoginSchema),
+  const loginForm = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      mobile: '',
+      password: '',
+    },
+  });
+
+  const registerForm = useForm({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       techPark: '',
       company: '',
       designation: '',
       employeeName: '',
       mobile: '',
+      password: '',
+      role: 'employee' as const,
     },
   });
 
-  const onSubmit = async (data: UserLoginForm) => {
-    setIsLoading(true);
+  const onLogin = async (data: z.infer<typeof loginSchema>) => {
     try {
-      // Create username from mobile number for uniqueness
-      const loginData = {
-        ...data,
-        username: data.mobile,
-        password: 'temp-password', // In real app, implement proper auth
-      };
-
-      const response = await apiRequest('POST', '/api/auth/user/login', loginData);
-      const result = await response.json();
-
-      if (result.success) {
-        login(result.user as User, 'employee');
-        toast({
-          title: 'Login Successful',
-          description: `Welcome, ${result.user.employeeName}!`,
-        });
-      } else {
-        throw new Error(result.error || 'Login failed');
-      }
-    } catch (error: any) {
-      toast({
-        variant: 'destructive',
-        title: 'Login Failed',
-        description: error.message || 'Please check your details and try again.',
+      const response = await fetch('/api/auth/user/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       });
-    } finally {
-      setIsLoading(false);
+
+      if (response.ok) {
+        const result = await response.json();
+        login(result.user, 'user');
+        toast({
+          title: 'Login successful',
+          description: 'Welcome back!',
+        });
+        setLocation('/');
+      } else {
+        const error = await response.json();
+        toast({
+          title: 'Login failed',
+          description: error.error,
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Login failed',
+        description: 'Network error. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const onRegister = async (data: z.infer<typeof registerSchema>) => {
+    try {
+      const response = await fetch('/api/auth/user/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        login(result.user, 'user');
+        toast({
+          title: 'Registration successful',
+          description: 'Account created successfully!',
+        });
+        
+        // Redirect based on role
+        if (data.role === 'manager') {
+          setLocation('/manager/dashboard');
+        } else {
+          setLocation('/');
+        }
+      } else {
+        const error = await response.json();
+        toast({
+          title: 'Registration failed',
+          description: error.error,
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Registration failed', 
+        description: 'Network error. Please try again.',
+        variant: 'destructive',
+      });
     }
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Employee Login</CardTitle>
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <div className="mx-auto mb-4 w-12 h-12 bg-primary rounded-full flex items-center justify-center">
+            <i className="fas fa-user text-primary-foreground text-xl"></i>
+          </div>
+          <CardTitle>{isLogin ? 'Employee Login' : 'Employee Registration'}</CardTitle>
+          <CardDescription>
+            {isLogin ? 'Sign in to order food' : 'Create your account to get started'}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <Label htmlFor="techPark">Tech Park Name</Label>
-              <Select
-                value={form.watch('techPark')}
-                onValueChange={(value) => form.setValue('techPark', value)}
-              >
-                <SelectTrigger data-testid="select-tech-park">
-                  <SelectValue placeholder="Select Tech Park" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Manyata Tech Park">Manyata Tech Park</SelectItem>
-                  <SelectItem value="Whitefield Tech Park">Whitefield Tech Park</SelectItem>
-                  <SelectItem value="Electronic City">Electronic City</SelectItem>
-                </SelectContent>
-              </Select>
-              {form.formState.errors.techPark && (
-                <p className="text-sm text-destructive mt-1">
-                  {form.formState.errors.techPark.message}
-                </p>
-              )}
-            </div>
+          {isLogin ? (
+            <form onSubmit={loginForm.handleSubmit(onLogin)} className="space-y-4">
+              <div>
+                <Label htmlFor="mobile">Mobile Number</Label>
+                <Input
+                  {...loginForm.register('mobile')}
+                  placeholder="Enter mobile number"
+                  data-testid="input-mobile"
+                />
+                {loginForm.formState.errors.mobile && (
+                  <p className="text-sm text-destructive mt-1">
+                    {loginForm.formState.errors.mobile.message}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <Label htmlFor="company">Company Name</Label>
-              <Input
-                {...form.register('company')}
-                placeholder="Enter company name"
-                data-testid="input-company"
-              />
-              {form.formState.errors.company && (
-                <p className="text-sm text-destructive mt-1">
-                  {form.formState.errors.company.message}
-                </p>
-              )}
-            </div>
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  {...loginForm.register('password')}
+                  type="password"
+                  placeholder="Enter password"
+                  data-testid="input-password"
+                />
+                {loginForm.formState.errors.password && (
+                  <p className="text-sm text-destructive mt-1">
+                    {loginForm.formState.errors.password.message}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <Label htmlFor="designation">Designation</Label>
-              <Input
-                {...form.register('designation')}
-                placeholder="Your designation"
-                data-testid="input-designation"
-              />
-              {form.formState.errors.designation && (
-                <p className="text-sm text-destructive mt-1">
-                  {form.formState.errors.designation.message}
-                </p>
-              )}
-            </div>
+              <Button type="submit" className="w-full" data-testid="button-login">
+                Login
+              </Button>
+            </form>
+          ) : (
+            <form onSubmit={registerForm.handleSubmit(onRegister)} className="space-y-4">
+              <div>
+                <Label>Role</Label>
+                <RadioGroup 
+                  value={registerForm.watch('role')} 
+                  onValueChange={(value) => registerForm.setValue('role', value as 'employee' | 'manager')}
+                  className="flex space-x-4 mt-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="employee" id="employee" />
+                    <Label htmlFor="employee">Employee</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="manager" id="manager" />
+                    <Label htmlFor="manager">Manager</Label>
+                  </div>
+                </RadioGroup>
+                {registerForm.formState.errors.role && (
+                  <p className="text-sm text-destructive mt-1">
+                    {registerForm.formState.errors.role.message}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <Label htmlFor="employeeName">Employee Name</Label>
-              <Input
-                {...form.register('employeeName')}
-                placeholder="Your full name"
-                data-testid="input-employee-name"
-              />
-              {form.formState.errors.employeeName && (
-                <p className="text-sm text-destructive mt-1">
-                  {form.formState.errors.employeeName.message}
-                </p>
-              )}
-            </div>
+              <div>
+                <Label htmlFor="techPark">Tech Park</Label>
+                <Input
+                  {...registerForm.register('techPark')}
+                  placeholder="Enter tech park name"
+                  data-testid="input-tech-park"
+                />
+                {registerForm.formState.errors.techPark && (
+                  <p className="text-sm text-destructive mt-1">
+                    {registerForm.formState.errors.techPark.message}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <Label htmlFor="mobile">Mobile Number</Label>
-              <Input
-                {...form.register('mobile')}
-                type="tel"
-                placeholder="Your mobile number"
-                data-testid="input-mobile"
-              />
-              {form.formState.errors.mobile && (
-                <p className="text-sm text-destructive mt-1">
-                  {form.formState.errors.mobile.message}
-                </p>
-              )}
-            </div>
+              <div>
+                <Label htmlFor="company">Company Name</Label>
+                <Input
+                  {...registerForm.register('company')}
+                  placeholder="Enter company name"
+                  data-testid="input-company"
+                />
+                {registerForm.formState.errors.company && (
+                  <p className="text-sm text-destructive mt-1">
+                    {registerForm.formState.errors.company.message}
+                  </p>
+                )}
+              </div>
 
+              <div>
+                <Label htmlFor="designation">Designation</Label>
+                <Input
+                  {...registerForm.register('designation')}
+                  placeholder="Your designation"
+                  data-testid="input-designation"
+                />
+                {registerForm.formState.errors.designation && (
+                  <p className="text-sm text-destructive mt-1">
+                    {registerForm.formState.errors.designation.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="employeeName">Employee Name</Label>
+                <Input
+                  {...registerForm.register('employeeName')}
+                  placeholder="Your full name"
+                  data-testid="input-employee-name"
+                />
+                {registerForm.formState.errors.employeeName && (
+                  <p className="text-sm text-destructive mt-1">
+                    {registerForm.formState.errors.employeeName.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="mobile">Mobile Number</Label>
+                <Input
+                  {...registerForm.register('mobile')}
+                  placeholder="Enter mobile number"
+                  data-testid="input-mobile-register"
+                />
+                {registerForm.formState.errors.mobile && (
+                  <p className="text-sm text-destructive mt-1">
+                    {registerForm.formState.errors.mobile.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  {...registerForm.register('password')}
+                  type="password"
+                  placeholder="Create password"
+                  data-testid="input-password-register"
+                />
+                {registerForm.formState.errors.password && (
+                  <p className="text-sm text-destructive mt-1">
+                    {registerForm.formState.errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              <Button type="submit" className="w-full" data-testid="button-register">
+                Register
+              </Button>
+            </form>
+          )}
+
+          <div className="mt-6 text-center">
             <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isLoading}
-              data-testid="button-login"
+              variant="ghost" 
+              onClick={() => setIsLogin(!isLogin)}
+              data-testid="button-toggle-form"
             >
-              {isLoading ? 'Logging in...' : 'Login'}
+              {isLogin ? "Don't have an account? Register" : 'Already have an account? Login'}
             </Button>
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>
