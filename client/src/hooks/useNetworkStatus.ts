@@ -5,11 +5,18 @@ export function useNetworkStatus() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
   useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Test network connectivity periodically
     const testNetwork = async () => {
       try {
-        const response = await fetch('/api/health', {
+        const response = await fetch('/api/health', { 
           method: 'HEAD',
-          cache: 'no-cache',
+          cache: 'no-cache'
         });
         setIsOnline(response.ok);
       } catch {
@@ -17,21 +24,7 @@ export function useNetworkStatus() {
       }
     };
 
-    const handleOnline = () => {
-      setIsOnline(true);
-      testNetwork();
-    };
-
-    const handleOffline = () => setIsOnline(false);
-
-    window.addEventListener('online', handleOnline);
-    window.addEventListener('offline', handleOffline);
-
-    // Initial network test
-    testNetwork();
-    
-    // Periodic network test
-    const interval = setInterval(testNetwork, 30000);
+    const interval = setInterval(testNetwork, 30000); // Test every 30 seconds
 
     return () => {
       window.removeEventListener('online', handleOnline);
@@ -40,5 +33,5 @@ export function useNetworkStatus() {
     };
   }, []);
 
-  return { isOnline };
+  return isOnline;
 }
