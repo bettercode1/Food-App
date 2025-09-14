@@ -1,3 +1,4 @@
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -15,21 +16,23 @@ function AppProviders() {
   const authState = useAuthState();
 
   return (
-    <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <AuthContext.Provider value={authState}>
-            <ThemeProvider>
-              <ViewModeProvider>
-                <App />
-                <Toaster />
-              </ViewModeProvider>
-            </ThemeProvider>
-          </AuthContext.Provider>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <AuthContext.Provider value={authState}>
+          <ThemeProvider>
+            <ViewModeProvider>
+              <App />
+              <Toaster />
+            </ViewModeProvider>
+          </ThemeProvider>
+        </AuthContext.Provider>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 
-createRoot(document.getElementById('root')!).render(<AppProviders />);
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <AppProviders />
+  </StrictMode>
+);
