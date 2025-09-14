@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 
 export function useNetworkStatus() {
@@ -12,7 +11,7 @@ export function useNetworkStatus() {
     window.addEventListener('offline', handleOffline);
 
     // Test network connectivity periodically
-    const testNetwork = async () => {
+    const testConnection = async () => {
       try {
         const response = await fetch('/api/health', { 
           method: 'HEAD',
@@ -24,7 +23,8 @@ export function useNetworkStatus() {
       }
     };
 
-    const interval = setInterval(testNetwork, 30000); // Test every 30 seconds
+    testConnection(); // Initial check
+    const interval = setInterval(testConnection, 30000); // Test every 30 seconds
 
     return () => {
       window.removeEventListener('online', handleOnline);
