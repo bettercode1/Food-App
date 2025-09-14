@@ -15,23 +15,21 @@ function AppProviders() {
   const authState = useAuthState();
 
   return (
-    <AuthContext.Provider value={authState}>
-      <ThemeProvider>
-        <ViewModeProvider>
-          <App />
-        </ViewModeProvider>
-      </ThemeProvider>
-    </AuthContext.Provider>
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <AuthContext.Provider value={authState}>
+            <ThemeProvider>
+              <ViewModeProvider>
+                <App />
+                <Toaster />
+              </ViewModeProvider>
+            </ThemeProvider>
+          </AuthContext.Provider>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </StrictMode>
   );
 }
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AppProviders />
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
-  </StrictMode>,
-);
+createRoot(document.getElementById('root')!).render(<AppProviders />);
