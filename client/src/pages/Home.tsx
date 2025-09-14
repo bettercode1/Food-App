@@ -10,6 +10,7 @@ import Cart from '@/components/Cart';
 import Payment from '@/components/Payment';
 import OrderTracking from '@/components/OrderTracking';
 import ManagerDashboard from '@/components/ManagerDashboard';
+import NotificationCenter from '@/components/NotificationCenter';
 import type { TechPark, Restaurant, CartItem, MenuItem, Order, User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
@@ -27,6 +28,7 @@ export default function Home() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [currentOrder, setCurrentOrder] = useState<Order | null>(null);
   const [paymentData, setPaymentData] = useState<any>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Reset flow when user changes
   if (user && userType === 'employee' && userFlow === 'login') {
@@ -188,13 +190,37 @@ export default function Home() {
   }
 
   if (userType === 'manager') {
-    return <ManagerDashboard />;
+    return (
+      <div>
+        {/* Manager Header with Notifications */}
+        <div className="fixed top-0 right-0 p-4 z-40">
+          <button
+            onClick={() => setShowNotifications(true)}
+            className="relative p-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors"
+          >
+            <i className="fas fa-bell text-lg"></i>
+            <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              3
+            </span>
+          </button>
+        </div>
+        
+        <ManagerDashboard />
+        
+        <NotificationCenter
+          userType="manager"
+          isVisible={showNotifications}
+          onClose={() => setShowNotifications(false)}
+        />
+      </div>
+    );
   }
 
-  // User flow
-  switch (userFlow) {
-    case 'tech-parks':
-      return <TechParkSelection onSelectPark={handleSelectPark} />;
+  // User flow - wrap with notification header
+  const renderEmployeeContent = () => {
+    switch (userFlow) {
+      case 'tech-parks':
+        return <TechParkSelection onSelectPark={handleSelectPark} />;
     
     case 'restaurants':
       return selectedPark ? (
@@ -241,5 +267,31 @@ export default function Home() {
     
     default:
       return <TechParkSelection onSelectPark={handleSelectPark} />;
-  }
+    }
+  };
+
+  return (
+    <div>
+      {/* Employee Header with Notifications */}
+      <div className="fixed top-0 right-0 p-4 z-40">
+        <button
+          onClick={() => setShowNotifications(true)}
+          className="relative p-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors"
+        >
+          <i className="fas fa-bell text-lg"></i>
+          <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            1
+          </span>
+        </button>
+      </div>
+      
+      {renderEmployeeContent()}
+      
+      <NotificationCenter
+        userType="employee"
+        isVisible={showNotifications}
+        onClose={() => setShowNotifications(false)}
+      />
+    </div>
+  );
 }

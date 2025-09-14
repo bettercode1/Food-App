@@ -29,17 +29,67 @@ export default function ManagerDashboard() {
       const response = await apiRequest('PUT', `/api/orders/${orderId}/status`, { status });
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (updatedOrder, variables) => {
       queryClient.invalidateQueries({ queryKey: ['/api/orders/restaurant'] });
-      toast({
-        title: 'Order Updated',
-        description: 'Order status has been updated successfully.',
-      });
+      
+      const getStatusUpdateMessage = (status: string) => {
+        switch (status) {
+          case 'preparing':
+            return {
+              title: '👨‍🍳 Order Accepted',
+              description: `Order ${updatedOrder?.orderNumber || ''} is now being prepared. Customer has been notified.`,
+              variant: undefined
+            };
+          case 'ready':
+            return {
+              title: '🍽️ Order Ready',
+              description: `Order ${updatedOrder?.orderNumber || ''} is ready for pickup/delivery. Customer has been notified.`,
+              variant: undefined
+            };
+          case 'dispatched':
+            return {
+              title: '🚛 Order Dispatched',
+              description: `Order ${updatedOrder?.orderNumber || ''} is now out for delivery. Customer is tracking the order.`,
+              variant: undefined
+            };
+          case 'delivered':
+            return {
+              title: '✅ Order Completed',
+              description: `Order ${updatedOrder?.orderNumber || ''} has been successfully delivered. Great job!`,
+              variant: undefined
+            };
+          case 'cancelled':
+            return {
+              title: '❌ Order Cancelled',
+              description: `Order ${updatedOrder?.orderNumber || ''} has been cancelled. Customer has been notified.`,
+              variant: 'destructive' as const
+            };
+          default:
+            return {
+              title: '📋 Order Updated',
+              description: `Order status has been updated to ${status}.`,
+              variant: undefined
+            };
+        }
+      };
+
+      const message = getStatusUpdateMessage(variables.status);
+      const toastOptions: any = {
+        title: message.title,
+        description: message.description,
+        duration: 4000,
+      };
+      
+      if (message.variant) {
+        toastOptions.variant = message.variant;
+      }
+      
+      toast(toastOptions);
     },
     onError: () => {
       toast({
         variant: 'destructive',
-        title: 'Update Failed',
+        title: '❌ Update Failed',
         description: 'Failed to update order status. Please try again.',
       });
     },

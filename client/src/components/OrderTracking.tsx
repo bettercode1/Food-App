@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 import GoogleMap from './GoogleMap';
 import type { Order } from '@/types';
 
@@ -21,6 +22,7 @@ export default function OrderTracking({ order }: OrderTrackingProps) {
   const [currentStatusIndex, setCurrentStatusIndex] = useState(0);
   const [simulatedProgress, setSimulatedProgress] = useState(0);
   const [estimatedTime, setEstimatedTime] = useState('15-20 min');
+  const { toast } = useToast();
 
   useEffect(() => {
     const statusIndex = orderStatuses.findIndex(status => status.key === order.status);
@@ -34,10 +36,60 @@ export default function OrderTracking({ order }: OrderTrackingProps) {
         // Auto-progress through statuses for demo
         if (prev < orderStatuses.length - 1) {
           const nextIndex = Math.min(prev + 1, orderStatuses.length - 1);
+          const nextStatus = orderStatuses[nextIndex];
           
           // Update estimated time based on progress
           const timeRemaining = Math.max(1, 20 - (nextIndex * 4));
           setEstimatedTime(`${timeRemaining}-${timeRemaining + 5} min`);
+          
+          // Show notification for status update
+          const getStatusMessage = (status: typeof nextStatus) => {
+            switch (status.key) {
+              case 'confirmed':
+                return {
+                  title: '✅ Order Confirmed!',
+                  description: 'Your order has been confirmed by the restaurant. We\'re starting preparation!',
+                  icon: '🎉'
+                };
+              case 'preparing':
+                return {
+                  title: '👨‍🍳 Preparing Your Order',
+                  description: `The chef is now preparing your delicious meal. Estimated time: ${timeRemaining}-${timeRemaining + 5} min`,
+                  icon: '🔥'
+                };
+              case 'ready':
+                return {
+                  title: '🍽️ Order Ready!',
+                  description: order.orderType === 'delivery' ? 'Your order is ready and will be dispatched shortly.' : 'Your order is ready for pickup!',
+                  icon: '✨'
+                };
+              case 'dispatched':
+                return {
+                  title: '🚛 Out for Delivery',
+                  description: 'Your order is on its way! Our delivery partner will reach you soon.',
+                  icon: '📍'
+                };
+              case 'delivered':
+                return {
+                  title: '🎊 Order Delivered!',
+                  description: 'Your order has been delivered successfully. Enjoy your meal!',
+                  icon: '🥳'
+                };
+              default:
+                return {
+                  title: 'Order Update',
+                  description: `Your order status has been updated to ${status.label}`,
+                  icon: '📝'
+                };
+            }
+          };
+
+          const message = getStatusMessage(nextStatus);
+          toast({
+            title: message.title,
+            description: message.description,
+            duration: 5000,
+          });
           
           return nextIndex;
         }
@@ -46,7 +98,7 @@ export default function OrderTracking({ order }: OrderTrackingProps) {
     }, 30000); // Progress every 30 seconds for demo
 
     return () => clearInterval(interval);
-  }, []);
+  }, [toast, order.orderType]);
 
   // Use simulated progress for demo, fallback to actual order status
   const displayStatusIndex = Math.max(currentStatusIndex, simulatedProgress);
