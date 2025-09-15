@@ -38,16 +38,25 @@ export function useAuthState() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log('🚀 useAuthState initializing...', { 
+      authAvailable: !!auth, 
+      dbAvailable: !!db,
+      NODE_ENV: import.meta.env.NODE_ENV,
+      isDev: import.meta.env.DEV
+    });
+    
     // Check if Firebase is available
     if (!auth || !db) {
-      console.warn('Firebase not available, using fallback authentication');
+      console.warn('⚠️ Firebase not available, using fallback authentication');
       // Check for stored auth data in localStorage as fallback
       const storedUser = localStorage.getItem('techpark-user');
       const storedType = localStorage.getItem('techpark-user-type') as UserType;
       
       if (storedUser && storedType) {
         try {
-          setUser(JSON.parse(storedUser));
+          const parsedUser = JSON.parse(storedUser);
+          console.log('✅ Restored user from localStorage:', parsedUser);
+          setUser(parsedUser);
           setUserType(storedType);
         } catch (error) {
           console.error('Error parsing stored user data:', error);
@@ -103,19 +112,24 @@ export function useAuthState() {
   }, []);
 
   const login = async (email: string, password: string, type: UserType) => {
-    // Check if this is a demo/mock credential attempt
-    const isDemoCredential = (
-      (type === 'employee' && email === '9876543210' && password === 'employee123') ||
-      (type === 'manager' && email === 'manager@canteendelight.com' && password === 'password123')
-    );
+    console.log('🔐 Login attempt:', { email, password, type });
+    
+    // ALWAYS check for demo credentials FIRST, regardless of Firebase status
+    const isEmployeeDemo = (type === 'employee' && email === '9876543210' && password === 'employee123');
+    const isManagerDemo = (type === 'manager' && email === 'manager@canteendelight.com' && password === 'password123');
+    const isDemoCredential = isEmployeeDemo || isManagerDemo;
+    
+    console.log('🎭 Demo credential check:', { 
+      isDemoCredential, 
+      isEmployeeDemo, 
+      isManagerDemo,
+      authAvailable: !!auth, 
+      dbAvailable: !!db 
+    });
 
-    // Force fallback authentication for demo credentials OR if Firebase is not available
-    if (!auth || !db || isDemoCredential) {
-      if (isDemoCredential) {
-        console.warn('Using demo credentials - fallback authentication enabled');
-      } else {
-        console.warn('Firebase not available, using fallback authentication');
-      }
+    // FORCE fallback for demo credentials - NEVER let them reach Firebase
+    if (isDemoCredential) {
+      console.warn('✅ DEMO CREDENTIALS DETECTED - Using fallback authentication (bypass Firebase)');
       
       // Mock user data based on type
       const mockUser = type === 'manager' 
@@ -131,17 +145,18 @@ export function useAuthState() {
           } as Manager
         : {
             id: 'mock-user-1',
-            username: typeof email === 'string' ? email.replace('@techpark.local', '') : '9876543210',
+            username: '9876543210',
             email: email,
             employeeName: 'Demo User',
             techPark: 'Manyata Tech Park',
             company: 'TechCorp Solutions',
             designation: 'Software Engineer',
-            mobile: typeof email === 'string' ? email.replace('@techpark.local', '') : '9876543210',
+            mobile: '9876543210',
             role: 'employee',
             createdAt: new Date().toISOString(),
           } as User;
 
+      console.log('✅ Mock user created:', mockUser);
       setUser(mockUser);
       setUserType(type);
       
@@ -153,7 +168,14 @@ export function useAuthState() {
       
       return;
     }
+    
+    // Only try Firebase if NOT demo credentials AND Firebase is available
+    if (!auth || !db) {
+      console.warn('⚠️ Firebase not available, using fallback authentication');
+      throw new Error('Firebase not available and these are not demo credentials. Please check your configuration.');
+    }
 
+    console.log('🔥 Attempting Firebase authentication for real credentials...');
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;
@@ -166,7 +188,7 @@ export function useAuthState() {
         setUserType(userData.role === 'manager' ? 'manager' : 'employee');
       }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('❌ Firebase login error:', error);
       throw error;
     }
   };

@@ -4,8 +4,16 @@ import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 
+// Check if we should force demo mode (useful for deployed demos)
+const FORCE_DEMO_MODE = import.meta.env.VITE_FORCE_DEMO_MODE === 'true';
+
 // Check if Firebase environment variables are properly set
 const validateFirebaseConfig = () => {
+  if (FORCE_DEMO_MODE) {
+    console.warn('🎭 FORCE_DEMO_MODE enabled - Firebase disabled for demo purposes');
+    return false;
+  }
+  
   const requiredVars = [
     'VITE_FIREBASE_API_KEY',
     'VITE_FIREBASE_PROJECT_ID',
@@ -46,11 +54,18 @@ let storage: any = null;
 let analytics: any = null;
 
 if (isConfigValid) {
+  console.log('⚙️ Initializing Firebase with config valid');
   try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
     storage = getStorage(app);
+    
+    console.log('✅ Firebase services initialized:', { 
+      auth: !!auth, 
+      db: !!db, 
+      storage: !!storage 
+    });
 
     // Initialize Analytics (only in browser and if measurement ID is provided)
     analytics = typeof window !== 'undefined' && import.meta.env.VITE_FIREBASE_MEASUREMENT_ID 
