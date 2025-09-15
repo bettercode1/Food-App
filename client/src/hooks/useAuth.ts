@@ -103,12 +103,22 @@ export function useAuthState() {
   }, []);
 
   const login = async (email: string, password: string, type: UserType) => {
-    if (!auth || !db) {
-      // Fallback to mock authentication for demo
-      console.warn('Using fallback authentication - this is for demo purposes only');
+    // Check if this is a demo/mock credential attempt
+    const isDemoCredential = (
+      (type === 'employee' && email === '9876543210' && password === 'employee123') ||
+      (type === 'manager' && email === 'manager@canteendelight.com' && password === 'password123')
+    );
+
+    // Force fallback authentication for demo credentials OR if Firebase is not available
+    if (!auth || !db || isDemoCredential) {
+      if (isDemoCredential) {
+        console.warn('Using demo credentials - fallback authentication enabled');
+      } else {
+        console.warn('Firebase not available, using fallback authentication');
+      }
       
       // Mock user data based on type
-        const mockUser = type === 'manager' 
+      const mockUser = type === 'manager' 
         ? {
             id: 'mock-manager-1',
             username: email,
@@ -162,9 +172,19 @@ export function useAuthState() {
   };
 
   const register = async (userData: Partial<User | Manager>, password: string, type: UserType) => {
-    if (!auth || !db) {
-      // Fallback to mock registration for demo
-      console.warn('Using fallback registration - this is for demo purposes only');
+    // Check if this is a demo registration (using demo email pattern)
+    const isDemoRegistration = (
+      (userData as any).email && 
+      ((userData as any).email.endsWith('@techpark.local') || (userData as any).email === 'manager@canteendelight.com')
+    );
+
+    // Force fallback registration for demo credentials OR if Firebase is not available
+    if (!auth || !db || isDemoRegistration) {
+      if (isDemoRegistration) {
+        console.warn('Using demo registration - fallback authentication enabled');
+      } else {
+        console.warn('Firebase not available, using fallback registration');
+      }
       
       const newUser = {
         id: `mock-${type}-${Date.now()}`,
@@ -224,22 +244,22 @@ export function useAuthState() {
   };
 
   const logout = async () => {
-    if (!auth) {
-      console.warn('Firebase not available, clearing local state');
-      setUser(null);
-      setUserType(null);
-      localStorage.removeItem('techpark-user');
-      localStorage.removeItem('techpark-user-type');
-      return;
-    }
+    // Always clear local state first
+    setUser(null);
+    setUserType(null);
+    localStorage.removeItem('techpark-user');
+    localStorage.removeItem('techpark-user-type');
 
-    try {
-      await firebaseSignOut(auth);
-      setUser(null);
-      setUserType(null);
-    } catch (error) {
-      console.error('Logout error:', error);
-      throw error;
+    // Only try Firebase signout if available
+    if (auth) {
+      try {
+        await firebaseSignOut(auth);
+      } catch (error) {
+        console.error('Firebase logout error:', error);
+        // Don't throw error here as local state is already cleared
+      }
+    } else {
+      console.warn('Firebase not available, cleared local state only');
     }
   };
 

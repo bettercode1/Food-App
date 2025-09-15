@@ -17,6 +17,7 @@ const validateFirebaseConfig = () => {
   if (missingVars.length > 0) {
     console.warn('Missing Firebase environment variables:', missingVars);
     console.warn('Please check your .env file and ensure all Firebase credentials are set.');
+    console.warn('Demo authentication will be used as fallback.');
     return false;
   }
   
@@ -69,9 +70,11 @@ if (isConfigValid) {
   } catch (error) {
     console.error('Firebase initialization failed:', error);
     console.error('Please check your Firebase configuration in .env file');
+    console.warn('Demo authentication will be used as fallback.');
   }
 } else {
   console.warn('Firebase not initialized due to missing configuration');
+  console.warn('Demo authentication will be used as fallback.');
 }
 
 // Export services with fallback handling
