@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { ShoppingCart, Flower as LocalFlorist, Store as RestaurantIcon } from 'lucide-react';
+import { getCachedFoodImage } from '@/utils/foodImageApi';
 import type { Restaurant, MenuCategory, MenuItem, CartItem } from '@/types';
 
 interface RestaurantMenuProps {
@@ -12,6 +14,58 @@ interface RestaurantMenuProps {
   cart: CartItem[];
   onUpdateCart: (item: MenuItem, action: 'add' | 'remove' | 'increment' | 'decrement') => void;
   onViewCart: () => void;
+}
+
+// Component for menu item image with food API integration
+function MenuItemImage({ item }: { item: MenuItem }) {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [imageError, setImageError] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch food image when component mounts
+  useEffect(() => {
+    const loadImage = async () => {
+      try {
+        setLoading(true);
+        const url = await getCachedFoodImage(item.name);
+        setImageUrl(url);
+        setImageError(false);
+      } catch (error) {
+        console.error('Failed to load food image:', error);
+        setImageError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadImage();
+  }, [item.name]);
+
+  if (loading) {
+    return (
+      <div className="w-24 h-24 bg-muted rounded-lg flex-shrink-0 animate-pulse">
+      </div>
+    );
+  }
+
+  if (imageError || !imageUrl) {
+    return (
+      <div className="w-24 h-24 bg-muted rounded-lg flex-shrink-0 flex items-center justify-center">
+        <RestaurantIcon className="text-2xl text-muted-foreground" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-24 h-24 bg-muted rounded-lg flex-shrink-0 overflow-hidden">
+      <img 
+        src={imageUrl}
+        alt={item.name}
+        className="w-full h-full object-cover"
+        onError={() => setImageError(true)}
+      />
+    </div>
+  );
 }
 
 export default function RestaurantMenu({ 
@@ -25,6 +79,13 @@ export default function RestaurantMenu({
 
   const { data: menuData, isLoading } = useQuery<MenuCategory[]>({
     queryKey: ['/api/menu/restaurant', restaurant.id],
+    queryFn: async () => {
+      const response = await fetch(`/api/menu/restaurant/${restaurant.id}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch menu data');
+      }
+      return response.json();
+    },
   });
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -101,7 +162,7 @@ export default function RestaurantMenu({
           onClick={onViewCart}
           data-testid="button-view-cart"
         >
-          <i className="fas fa-shopping-cart mr-2"></i>
+          <ShoppingCart className="mr-2" />
           View Cart ({totalItems})
         </Button>
       </div>
@@ -134,15 +195,7 @@ export default function RestaurantMenu({
             return (
               <Card key={item.id} data-testid={`card-menu-item-${item.id}`}>
                 <CardContent className="p-4 flex space-x-4">
-                  <div className="w-24 h-24 bg-muted rounded-lg flex-shrink-0 overflow-hidden">
-                    {item.imageUrl && (
-                      <img 
-                        src={item.imageUrl} 
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
+                  <MenuItemImage item={item} />
                   <div className="flex-1">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -158,7 +211,7 @@ export default function RestaurantMenu({
                             variant={item.isVeg ? "default" : "secondary"}
                             className={item.isVeg ? "bg-chart-2" : "bg-chart-5"}
                           >
-                            <i className={`fas ${item.isVeg ? 'fa-seedling' : 'fa-drumstick-bite'} mr-1`}></i>
+                            <LocalFlorist className="mr-1 text-sm" />
                             {item.isVeg ? 'Veg' : 'Non-Veg'}
                           </Badge>
                           {!item.isAvailable && (
@@ -212,7 +265,7 @@ export default function RestaurantMenu({
 
       {menuData?.find(category => category.name === currentCategory)?.items?.length === 0 && (
         <div className="text-center py-12">
-          <i className="fas fa-utensils text-4xl text-muted-foreground mb-4"></i>
+          <RestaurantIcon className="text-4xl text-muted-foreground mb-4 mx-auto" />
           <h3 className="text-lg font-semibold text-foreground mb-2">No items in this category</h3>
           <p className="text-muted-foreground">Check back later or try another category.</p>
         </div>

@@ -3,87 +3,101 @@
 @tailwind utilities;
 
 :root {
-  --card: #101011;
-  --ring: 221.74 13.14% 34.31%;
-  --input: #2b2b2b;
-  --muted: #404040;
-  --accent: 0 0% 92.16%;
-  --border: #2b2b2b;
+  /* Light mode - high contrast for visibility */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+  --primary: 9 75% 61%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 15%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 15%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 9 75% 61%;
   --radius: 0.4rem;
-  --shadow: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 1px 2px -1px hsl(9, 75%, 61% / 0.00);
+  
+  /* Chart colors for consistency */
   --chart-1: 203.8863 88.2845% 53.1373%;
   --chart-2: 159.7826 100% 36.0784%;
   --chart-3: 42.0290 92.8251% 56.2745%;
   --chart-4: 147.1429 78.5047% 41.9608%;
   --chart-5: 341.4894 75.2000% 50.9804%;
-  --popover: 45 25% 97%;
-  --primary: #f5f5f5;
-  --sidebar: 45 25% 97%;
-  --spacing: 0.25rem;
+  
+  /* Font and spacing */
   --font-mono: Menlo, monospace;
   --font-sans: 'Inter', sans-serif;
-  --secondary: #ebebeb;
-  --shadow-lg: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 4px 6px -1px hsl(9, 75%, 61% / 0.00);
-  --shadow-md: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 2px 4px -1px hsl(9, 75%, 61% / 0.00);
-  --shadow-sm: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 1px 2px -1px hsl(9, 75%, 61% / 0.00);
-  --shadow-xl: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 8px 10px -1px hsl(9, 75%, 61% / 0.00);
-  --shadow-xs: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00);
-  --background: #090909;
   --font-serif: 'Inter', sans-serif;
-  --foreground: #ebebeb;
-  --shadow-2xl: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00);
-  --shadow-2xs: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00);
-  --destructive: 356.3033 90.5579% 54.3137%;
-  --sidebar-ring: 9 75% 61%;
-  --sidebar-accent: 25 45% 80%;
-  --sidebar-border: 45 15% 80%;
-  --card-foreground: 0 0% 100%;
-  --sidebar-primary: 9 75% 61%;
+  --spacing: 0.25rem;
   --tracking-normal: 0em;
-  --muted-foreground: #ababab;
-  --accent-foreground: 0 0% 0%;
-  --popover-foreground: 0 0% 100%;
-  --primary-foreground: #0d0d0d;
-  --sidebar-foreground: 20 14% 17%;
-  --secondary-foreground: #0d0d0d;
-  --destructive-foreground: #ffffff;
-  --sidebar-accent-foreground: 20 14% 17%;
+  
+  /* Shadows - minimal for flat design */
+  --shadow: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 1px 2px -1px hsl(9, 75%, 61% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 1px 2px -1px hsl(9, 75%, 61% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 2px 4px -1px hsl(9, 75%, 61% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 4px 6px -1px hsl(9, 75%, 61% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00), 0px 8px 10px -1px hsl(9, 75%, 61% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00);
+  --shadow-2xs: 0px 2px 0px 0px hsl(9, 75%, 61% / 0.00);
+  
+  /* Sidebar */
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 0 0% 15%;
+  --sidebar-primary: 9 75% 61%;
   --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 0 0% 96%;
+  --sidebar-accent-foreground: 0 0% 15%;
+  --sidebar-border: 0 0% 90%;
+  --sidebar-ring: 9 75% 61%;
 }
 
 .dark {
-  --card: 20 14% 8%;
+  /* Dark mode - improved contrast and visibility */
+  --background: 0 0% 3%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 7%;
+  --card-foreground: 0 0% 95%;
+  --popover: 0 0% 7%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 9 75% 61%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 85%;
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 65%;
+  --accent: 0 0% 15%;
+  --accent-foreground: 0 0% 85%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 0 0% 20%;
+  --input: 0 0% 20%;
   --ring: 9 75% 61%;
-  --input: 20 14% 18%;
-  --muted: 20 14% 15%;
-  --accent: 25 45% 20%;
-  --border: 20 14% 15%;
+  
+  /* Chart colors remain the same for consistency */
   --chart-1: 203.8863 88.2845% 53.1373%;
   --chart-2: 159.7826 100% 36.0784%;
   --chart-3: 42.0290 92.8251% 56.2745%;
   --chart-4: 147.1429 78.5047% 41.9608%;
   --chart-5: 341.4894 75.2000% 50.9804%;
-  --popover: 20 14% 4%;
-  --primary: 9 75% 61%;
-  --sidebar: 20 14% 8%;
-  --secondary: 30 15% 52%;
-  --background: 20 14% 4%;
-  --foreground: 45 25% 91%;
-  --destructive: 356.3033 90.5579% 54.3137%;
-  --sidebar-ring: 9 75% 61%;
-  --sidebar-accent: 25 45% 20%;
-  --sidebar-border: 20 14% 15%;
-  --card-foreground: 45 25% 85%;
+  
+  /* Sidebar */
+  --sidebar: 0 0% 5%;
+  --sidebar-foreground: 0 0% 85%;
   --sidebar-primary: 9 75% 61%;
-  --muted-foreground: 45 15% 46%;
-  --accent-foreground: 45 25% 85%;
-  --popover-foreground: 45 25% 91%;
-  --primary-foreground: 0 0% 100%;
-  --sidebar-foreground: 45 25% 85%;
-  --secondary-foreground: 0 0% 100%;
-  --destructive-foreground: 0 0% 100%;
-  --sidebar-accent-foreground: 45 25% 85%;
   --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 0 0% 15%;
+  --sidebar-accent-foreground: 0 0% 85%;
+  --sidebar-border: 0 0% 20%;
+  --sidebar-ring: 9 75% 61%;
 }
 
 @layer base {
@@ -94,6 +108,36 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
     font-family: 'Inter', sans-serif;
+  }
+
+  /* Ensure proper contrast for all text elements */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-foreground;
+    font-weight: 600;
+  }
+
+  p, span, div {
+    @apply text-foreground;
+  }
+
+  /* Ensure icons are visible */
+  i, .icon {
+    @apply text-foreground;
+  }
+
+  /* Improve button visibility */
+  button {
+    @apply text-foreground;
+  }
+
+  /* Ensure form elements are visible */
+  input, textarea, select {
+    @apply bg-background text-foreground border-border;
+  }
+
+  /* Improve card visibility */
+  .card {
+    @apply bg-card text-card-foreground border-border;
   }
 
   /* Flat design - no shadows or hover effects */
@@ -152,6 +196,31 @@
   /* Card hover states */
   .card:hover {
     background-color: hsl(var(--accent) / 0.5);
+  }
+
+  /* Specific improvements for visibility */
+  .tech-park-card {
+    @apply bg-card text-card-foreground border-2 border-border;
+    transition: all 0.2s ease;
+  }
+
+  .tech-park-card:hover {
+    @apply border-primary bg-accent/50;
+  }
+
+  /* Ensure badges are visible */
+  .badge {
+    @apply bg-secondary text-secondary-foreground border-border;
+  }
+
+  /* Improve skeleton visibility */
+  .skeleton {
+    @apply bg-muted;
+  }
+
+  /* Ensure proper contrast for muted text */
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
   }
 
   /* Remove focus rings and replace with flat alternatives */

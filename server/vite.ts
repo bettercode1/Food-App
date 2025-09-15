@@ -22,7 +22,11 @@ export function log(message: string, source = "express") {
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
-    hmr: { server },
+    hmr: { 
+      server,
+      port: 5000,
+      host: 'localhost'
+    },
     allowedHosts: true as const,
   };
 
@@ -33,11 +37,19 @@ export async function setupVite(app: Express, server: Server) {
       ...viteLogger,
       error: (msg, options) => {
         viteLogger.error(msg, options);
-        process.exit(1);
+        // Don't exit on error, just log it
+        console.error('Vite error:', msg, options);
       },
     },
     server: serverOptions,
     appType: "custom",
+    optimizeDeps: {
+      disabled: 'build'
+    },
+    esbuild: {
+      jsx: 'automatic',
+      jsxImportSource: 'react'
+    }
   });
 
   app.use(vite.middlewares);

@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 
 type ViewMode = 'user' | 'manager';
 
@@ -24,6 +24,16 @@ export function useViewModeState() {
     viewMode,
     setViewMode
   };
+}
+
+export function ViewModeProvider({ children }: { children: React.ReactNode }) {
+  const viewModeState = useViewModeState();
+
+  return (
+    <ViewModeContext.Provider value={viewModeState}>
+      {children}
+    </ViewModeContext.Provider>
+  );
 }
 
 export { ViewModeContext };

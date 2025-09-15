@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useViewMode } from '@/hooks/useViewMode';
-import UserLogin from '@/components/UserLogin';
-import ManagerLogin from '@/components/ManagerLogin';
+import UnifiedAuth from '@/components/UnifiedAuth';
 import TechParkSelection from '@/components/TechParkSelection';
 import FoodPlaces from '@/components/FoodPlaces';
 import RestaurantMenu from '@/components/RestaurantMenu';
@@ -11,6 +10,7 @@ import Payment from '@/components/Payment';
 import OrderTracking from '@/components/OrderTracking';
 import ManagerDashboard from '@/components/ManagerDashboard';
 import NotificationCenter from '@/components/NotificationCenter';
+import { Bell as Notifications } from 'lucide-react';
 import type { TechPark, Restaurant, CartItem, MenuItem, Order, User } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
@@ -186,7 +186,11 @@ export default function Home() {
 
   // Show appropriate view based on view mode and authentication
   if (!user) {
-    return viewMode === 'manager' ? <ManagerLogin /> : <UserLogin />;
+    return (
+      <div key={`auth-${viewMode}`}>
+        <UnifiedAuth />
+      </div>
+    );
   }
 
   if (userType === 'manager') {
@@ -198,7 +202,7 @@ export default function Home() {
             onClick={() => setShowNotifications(true)}
             className="relative p-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors"
           >
-            <i className="fas fa-bell text-lg"></i>
+            <Notifications className="h-5 w-5" />
             <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
               3
             </span>
@@ -278,7 +282,7 @@ export default function Home() {
           onClick={() => setShowNotifications(true)}
           className="relative p-2 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors"
         >
-          <i className="fas fa-bell text-lg"></i>
+          <Notifications className="h-5 w-5" />
           <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
             1
           </span>

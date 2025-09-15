@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 export function useNetworkStatus() {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [isSlowConnection, setIsSlowConnection] = useState(false);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -13,13 +14,19 @@ export function useNetworkStatus() {
     // Test network connectivity periodically
     const testConnection = async () => {
       try {
+        const startTime = Date.now();
         const response = await fetch('/api/health', { 
           method: 'HEAD',
           cache: 'no-cache'
         });
+        const endTime = Date.now();
+        const responseTime = endTime - startTime;
+        
         setIsOnline(response.ok);
+        setIsSlowConnection(responseTime > 2000); // Consider slow if > 2 seconds
       } catch {
         setIsOnline(false);
+        setIsSlowConnection(false);
       }
     };
 
@@ -33,5 +40,5 @@ export function useNetworkStatus() {
     };
   }, []);
 
-  return isOnline;
+  return { isOnline, isSlowConnection };
 }

@@ -6,6 +6,9 @@ export interface User {
   company: string;
   designation: string;
   mobile: string;
+  email?: string;
+  role?: string;
+  createdAt?: string;
 }
 
 export interface Manager {
@@ -14,6 +17,9 @@ export interface Manager {
   restaurantName: string;
   email: string;
   techPark: string;
+  name?: string;
+  role?: string;
+  createdAt?: string;
 }
 
 export interface TechPark {
@@ -32,6 +38,7 @@ export interface Restaurant {
   rating: number;
   distance: number;
   preparationTime: string;
+  estimatedTime?: string;
   priceRange: string;
   isOpen: boolean;
   deliveryAvailable: boolean;
@@ -78,11 +85,13 @@ export interface Order {
   deliveryCharge: number;
   gst: number;
   total: number;
+  totalAmount?: number;
   paymentMethod?: string;
   paymentStatus: string;
   deliveryAddress?: string;
   estimatedTime?: string;
-  createdAt?: Date;
+  specialInstructions?: string;
+  createdAt?: Date | string;
   items?: OrderItem[];
 }
 
@@ -93,6 +102,8 @@ export interface OrderItem {
   quantity: number;
   price: number;
   total: number;
+  name?: string;
+  image?: string;
 }
 
 export type AuthUser = User | Manager | null;

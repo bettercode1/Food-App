@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { QrCode, Smartphone as PhoneAndroid, CreditCard, Building2 as AccountBalance, Handshake, Store, Truck as LocalShipping, Store as RestaurantIcon, ShoppingBag, Receipt, Lock, Shield as Security, ArrowLeft as ArrowBack, RotateCcw as Refresh } from 'lucide-react';
 import type { Restaurant } from '@/types';
 
 interface PaymentProps {
@@ -27,6 +28,7 @@ type PaymentMethod = 'upi' | 'card' | 'netbanking' | 'cod';
 export default function Payment({ orderData, restaurant, onPaymentConfirm, onBack }: PaymentProps) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('upi');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [lastPaymentFailed, setLastPaymentFailed] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState({
     upiId: 'user@paytm',
     cardNumber: '**** **** **** 1234',
@@ -38,12 +40,13 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
 
   const handlePayment = async () => {
     setIsProcessing(true);
+    setLastPaymentFailed(false);
     
     // Simulate payment processing time
     await new Promise(resolve => setTimeout(resolve, 3000));
     
-    // Simulate payment success (95% success rate for demo)
-    const isSuccess = Math.random() > 0.05;
+    // Simulate payment success (99% success rate for demo - reduced failure for better UX)
+    const isSuccess = Math.random() > 0.01;
     
     if (isSuccess) {
       toast({
@@ -52,10 +55,16 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
       });
       onPaymentConfirm(paymentMethod);
     } else {
+      setLastPaymentFailed(true);
       toast({
         variant: 'destructive',
         title: 'Payment Failed',
-        description: 'Your payment could not be processed. Please try again.',
+        description: 'Your payment could not be processed. Please try again with a different method or retry.',
+        action: (
+          <Button variant="outline" size="sm" onClick={() => setLastPaymentFailed(false)}>
+            Try Again
+          </Button>
+        ),
       });
       setIsProcessing(false);
     }
@@ -68,30 +77,30 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
           <div className="space-y-4">
             <div className="flex items-center justify-center p-8 bg-gradient-to-br from-chart-1/20 to-chart-2/20 rounded-lg border-2 border-dashed border-chart-1/30">
               <div className="text-center">
-                <i className="fas fa-qrcode text-4xl text-chart-1 mb-4"></i>
+                <QrCode className="h-10 w-10 text-chart-1 mb-4 mx-auto" />
                 <h3 className="text-lg font-semibold text-foreground mb-2">Scan QR Code</h3>
                 <p className="text-sm text-muted-foreground mb-4">Use any UPI app to scan and pay</p>
                 <Badge variant="outline" className="bg-chart-1/10 text-chart-1">
-                  <i className="fas fa-mobile-alt mr-1"></i>
+                  <PhoneAndroid className="h-4 w-4 mr-1" />
                   UPI ID: {paymentDetails.upiId}
                 </Badge>
               </div>
             </div>
             <div className="grid grid-cols-4 gap-3">
               <div className="flex flex-col items-center p-3 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                <i className="fas fa-wallet text-2xl text-chart-1 mb-2"></i>
+                <PhoneAndroid className="h-8 w-8 text-chart-1 mb-2" />
                 <span className="text-xs text-muted-foreground">Paytm</span>
               </div>
               <div className="flex flex-col items-center p-3 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                <i className="fab fa-google-pay text-2xl text-chart-2 mb-2"></i>
+                <PhoneAndroid className="h-8 w-8 text-chart-2 mb-2" />
                 <span className="text-xs text-muted-foreground">GPay</span>
               </div>
               <div className="flex flex-col items-center p-3 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                <i className="fas fa-mobile-alt text-2xl text-chart-3 mb-2"></i>
+                <PhoneAndroid className="h-8 w-8 text-chart-3 mb-2" />
                 <span className="text-xs text-muted-foreground">PhonePe</span>
               </div>
               <div className="flex flex-col items-center p-3 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                <i className="fas fa-university text-2xl text-chart-5 mb-2"></i>
+                <AccountBalance className="h-8 w-8 text-chart-5 mb-2" />
                 <span className="text-xs text-muted-foreground">BHIM</span>
               </div>
             </div>
@@ -104,7 +113,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
             <div className="p-4 bg-gradient-to-r from-chart-2/20 to-chart-3/20 rounded-lg border">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold">Saved Card</h3>
-                <i className="fab fa-cc-mastercard text-2xl text-chart-2"></i>
+                <CreditCard className="h-8 w-8 text-chart-2" />
               </div>
               <p className="text-lg font-mono tracking-wider mb-2">{paymentDetails.cardNumber}</p>
               <div className="flex justify-between text-sm text-muted-foreground">
@@ -128,15 +137,15 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
             </div>
             <div className="flex space-x-3">
               <Badge variant="outline" className="bg-chart-2/10">
-                <i className="fab fa-cc-visa mr-1"></i>
+                <CreditCard className="h-4 w-4 mr-1" />
                 Visa
               </Badge>
               <Badge variant="outline" className="bg-chart-3/10">
-                <i className="fab fa-cc-mastercard mr-1"></i>
+                <CreditCard className="h-4 w-4 mr-1" />
                 Mastercard
               </Badge>
               <Badge variant="outline" className="bg-chart-1/10">
-                <i className="fab fa-cc-amex mr-1"></i>
+                <CreditCard className="h-4 w-4 mr-1" />
                 Amex
               </Badge>
             </div>
@@ -148,7 +157,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
           <div className="space-y-4">
             <div className="p-4 border rounded-lg bg-chart-3/10">
               <div className="flex items-center space-x-3 mb-3">
-                <i className="fas fa-university text-2xl text-chart-3"></i>
+                <AccountBalance className="h-8 w-8 text-chart-3" />
                 <div>
                   <h3 className="font-semibold">{paymentDetails.netbankingBank}</h3>
                   <p className="text-sm text-muted-foreground">Internet Banking</p>
@@ -159,7 +168,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
             <div className="grid grid-cols-2 gap-3">
               {['HDFC Bank', 'ICICI Bank', 'SBI', 'Axis Bank'].map((bank) => (
                 <div key={bank} className="flex items-center p-3 border rounded-lg hover:bg-accent/50 cursor-pointer">
-                  <i className="fas fa-building text-chart-3 mr-3"></i>
+                  <AccountBalance className="h-5 w-5 text-chart-3 mr-3" />
                   <span className="text-sm">{bank}</span>
                 </div>
               ))}
@@ -171,23 +180,23 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
         return (
           <div className="space-y-4">
             <div className="p-6 text-center bg-chart-5/10 border rounded-lg">
-              <i className="fas fa-hand-holding-usd text-4xl text-chart-5 mb-4"></i>
+              <Handshake className="h-10 w-10 text-chart-5 mb-4 mx-auto" />
               <h3 className="text-lg font-semibold text-foreground mb-2">Cash on Delivery</h3>
               <p className="text-sm text-muted-foreground mb-4">
                 Pay with cash when your order arrives
               </p>
               <div className="inline-flex items-center px-3 py-2 bg-chart-5/20 border border-chart-5/30 rounded-lg">
-                <i className="fas fa-info-circle text-chart-5 mr-2"></i>
+                <Security className="h-4 w-4 text-chart-5 mr-2" />
                 <span className="text-sm">Please keep exact change ready</span>
               </div>
             </div>
             <div className="flex items-center justify-center space-x-6 text-sm text-muted-foreground">
               <span className="flex items-center">
-                <i className="fas fa-check-circle text-chart-2 mr-2"></i>
+                <Security className="h-4 w-4 text-chart-2 mr-2" />
                 No advance payment
               </span>
               <span className="flex items-center">
-                <i className="fas fa-shield-alt text-chart-2 mr-2"></i>
+                <Lock className="h-4 w-4 text-chart-2 mr-2" />
                 Secure & convenient
               </span>
             </div>
@@ -204,7 +213,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-foreground">Complete Payment</h2>
         <Button variant="ghost" onClick={onBack}>
-          <i className="fas fa-arrow-left mr-2"></i>
+          <ArrowBack className="h-4 w-4 mr-2" />
           Back to Cart
         </Button>
       </div>
@@ -215,7 +224,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <i className="fas fa-credit-card mr-2 text-primary"></i>
+                <CreditCard className="h-5 w-5 mr-2 text-primary" />
                 Select Payment Method
               </CardTitle>
             </CardHeader>
@@ -230,7 +239,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
                   className="flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer data-[state=checked]:border-primary data-[state=checked]:bg-primary/10"
                 >
                   <RadioGroupItem value="upi" id="upi" className="sr-only" />
-                  <i className="fas fa-mobile-alt text-2xl mb-2 text-chart-1"></i>
+                  <PhoneAndroid className="h-8 w-8 mb-2 text-chart-1" />
                   <span className="font-medium">UPI</span>
                   <span className="text-xs text-muted-foreground">Instant & Secure</span>
                 </Label>
@@ -240,7 +249,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
                   className="flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer data-[state=checked]:border-primary data-[state=checked]:bg-primary/10"
                 >
                   <RadioGroupItem value="card" id="card" className="sr-only" />
-                  <i className="fas fa-credit-card text-2xl mb-2 text-chart-2"></i>
+                  <CreditCard className="h-8 w-8 mb-2 text-chart-2" />
                   <span className="font-medium">Card</span>
                   <span className="text-xs text-muted-foreground">Debit/Credit</span>
                 </Label>
@@ -250,7 +259,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
                   className="flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer data-[state=checked]:border-primary data-[state=checked]:bg-primary/10"
                 >
                   <RadioGroupItem value="netbanking" id="netbanking" className="sr-only" />
-                  <i className="fas fa-university text-2xl mb-2 text-chart-3"></i>
+                  <AccountBalance className="h-8 w-8 mb-2 text-chart-3" />
                   <span className="font-medium">Net Banking</span>
                   <span className="text-xs text-muted-foreground">All Banks</span>
                 </Label>
@@ -261,7 +270,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
                     className="flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer data-[state=checked]:border-primary data-[state=checked]:bg-primary/10"
                   >
                     <RadioGroupItem value="cod" id="cod" className="sr-only" />
-                    <i className="fas fa-hand-holding-usd text-2xl mb-2 text-chart-5"></i>
+                    <Handshake className="h-8 w-8 mb-2 text-chart-5" />
                     <span className="font-medium">Cash on Delivery</span>
                     <span className="text-xs text-muted-foreground">Pay at doorstep</span>
                   </Label>
@@ -278,7 +287,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
           <Card className="sticky top-4">
             <CardHeader>
               <CardTitle className="flex items-center">
-                <i className="fas fa-receipt mr-2 text-primary"></i>
+                <Receipt className="h-5 w-5 mr-2 text-primary" />
                 Payment Summary
               </CardTitle>
             </CardHeader>
@@ -286,7 +295,7 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
               <div className="space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
-                    <i className="fas fa-store text-chart-1"></i>
+                    <Store className="h-5 w-5 text-chart-1" />
                     <div>
                       <h4 className="font-medium">{restaurant.name}</h4>
                       <p className="text-xs text-muted-foreground">{restaurant.cuisine}</p>
@@ -296,10 +305,13 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
                     variant={orderData.orderType === 'delivery' ? 'default' : 'secondary'}
                     className="flex items-center w-fit"
                   >
-                    <i className={`fas ${
-                      orderData.orderType === 'delivery' ? 'fa-truck' : 
-                      orderData.orderType === 'dine-in' ? 'fa-utensils' : 'fa-shopping-bag'
-                    } mr-1`}></i>
+                    {orderData.orderType === 'delivery' ? (
+                      <LocalShipping className="h-4 w-4 mr-1" />
+                    ) : orderData.orderType === 'dine-in' ? (
+                      <RestaurantIcon className="h-4 w-4 mr-1" />
+                    ) : (
+                      <ShoppingBag className="h-4 w-4 mr-1" />
+                    )}
                     {orderData.orderType}
                   </Badge>
                 </div>
@@ -330,19 +342,33 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
                   <span>₹{orderData.total}</span>
                 </div>
 
+                {lastPaymentFailed && (
+                  <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                    <div className="flex items-center text-destructive text-sm">
+                      <Security className="h-4 w-4 mr-2" />
+                      <span>Payment failed. Please try again or use a different payment method.</span>
+                    </div>
+                  </div>
+                )}
+
                 <Button 
-                  className="w-full bg-chart-3 hover:bg-chart-3/90" 
+                  className={`w-full ${lastPaymentFailed ? 'bg-destructive hover:bg-destructive/90 border-2 border-destructive/50' : 'bg-chart-3 hover:bg-chart-3/90'}`}
                   onClick={handlePayment}
                   disabled={isProcessing}
                 >
                   {isProcessing ? (
                     <>
-                      <i className="fas fa-spinner fa-spin mr-2"></i>
+                      <Refresh className="h-4 w-4 mr-2 animate-spin" />
                       Processing...
+                    </>
+                  ) : lastPaymentFailed ? (
+                    <>
+                      <Lock className="h-4 w-4 mr-2" />
+                      Retry Payment ₹{orderData.total}
                     </>
                   ) : (
                     <>
-                      <i className="fas fa-lock mr-2"></i>
+                      <Lock className="h-4 w-4 mr-2" />
                       Pay ₹{orderData.total}
                     </>
                   )}
@@ -350,11 +376,11 @@ export default function Payment({ orderData, restaurant, onPaymentConfirm, onBac
 
                 <div className="flex items-center justify-center space-x-4 text-xs text-muted-foreground">
                   <span className="flex items-center">
-                    <i className="fas fa-shield-alt text-chart-2 mr-1"></i>
+                    <Security className="h-4 w-4 text-chart-2 mr-1" />
                     Secure
                   </span>
                   <span className="flex items-center">
-                    <i className="fas fa-lock text-chart-2 mr-1"></i>
+                    <Lock className="h-4 w-4 text-chart-2 mr-1" />
                     Encrypted
                   </span>
                 </div>

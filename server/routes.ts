@@ -19,18 +19,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes
   app.post("/api/auth/user/login", async (req, res) => {
     try {
-      const userData = insertUserSchema.parse(req.body);
+      const { mobile, password } = req.body;
       
-      // Check if user already exists
-      let user = await storage.getUserByUsername(userData.username);
+      // Check if user exists by mobile number
+      const user = await storage.getUserByUsername(mobile);
       
       if (!user) {
-        // Create new user
-        user = await storage.createUser(userData);
+        return res.status(401).json({ error: "Invalid credentials" });
       }
       
       // In a real app, you'd verify password here
-      res.json({ success: true, user: { id: user.id, username: user.username, employeeName: user.employeeName } });
+      res.json({ success: true, user: { id: user.id, username: user.mobile, employeeName: user.employeeName } });
+    } catch (error) {
+      res.status(400).json({ error: "Invalid user data" });
+    }
+  });
+
+  app.post("/api/auth/user/register", async (req, res) => {
+    try {
+      const userData = insertUserSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByUsername(userData.mobile);
+      if (existingUser) {
+        return res.status(400).json({ error: "User already exists with this mobile number" });
+      }
+      
+      // Create new user
+      const user = await storage.createUser(userData);
+      
+      res.json({ success: true, user: { id: user.id, username: user.mobile, employeeName: user.employeeName } });
     } catch (error) {
       res.status(400).json({ error: "Invalid user data" });
     }
@@ -53,6 +71,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true, manager: { id: manager.id, username: manager.username, restaurantName: manager.restaurantName } });
     } catch (error) {
       res.status(400).json({ error: "Login failed" });
+    }
+  });
+
+  app.post("/api/auth/manager/register", async (req, res) => {
+    try {
+      const managerData = insertManagerSchema.parse(req.body);
+      
+      // Check if manager already exists
+      const existingManager = await storage.getManagerByUsername(managerData.email);
+      if (existingManager) {
+        return res.status(400).json({ error: "Manager already exists with this email" });
+      }
+      
+      // Create new manager
+      const manager = await storage.createManager(managerData);
+      
+      res.json({ success: true, manager: { id: manager.id, username: manager.username, restaurantName: manager.restaurantName } });
+    } catch (error) {
+      res.status(400).json({ error: "Invalid manager data" });
     }
   });
 
@@ -310,6 +347,135 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(restaurant);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch restaurant" });
+    }
+  });
+
+  // Notifications
+  app.get("/api/notifications/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      // Mock notifications data
+      const notifications = [
+        {
+          id: '1',
+          userId: userId,
+          title: 'Order Confirmed',
+          message: 'Your order #12345 has been confirmed and is being prepared.',
+          type: 'order',
+          isRead: false,
+          createdAt: new Date().toISOString()
+        }
+      ];
+      res.json(notifications);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch notifications" });
+    }
+  });
+
+  // Loyalty Program
+  app.get("/api/loyalty/user/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const userLoyalty = {
+        id: '1',
+        userId: userId,
+        points: 150,
+        tier: 'Silver',
+        totalOrders: 5,
+        nextTierPoints: 50
+      };
+      res.json(userLoyalty);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch loyalty data" });
+    }
+  });
+
+  app.get("/api/loyalty/rewards", async (req, res) => {
+    try {
+      const rewards = [
+        {
+          id: '1',
+          name: 'Free Coffee',
+          description: 'Get a free coffee with your next order',
+          pointsRequired: 100,
+          isActive: true
+        }
+      ];
+      res.json(rewards);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch rewards" });
+    }
+  });
+
+  app.get("/api/loyalty/tiers", async (req, res) => {
+    try {
+      const tiers = [
+        { name: 'Bronze', minPoints: 0, maxPoints: 99 },
+        { name: 'Silver', minPoints: 100, maxPoints: 299 },
+        { name: 'Gold', minPoints: 300, maxPoints: 999 }
+      ];
+      res.json(tiers);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch loyalty tiers" });
+    }
+  });
+
+  // Messaging System
+  app.get("/api/messages/chatrooms/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const chatRooms = [
+        {
+          id: '1',
+          name: 'Support Team',
+          lastMessage: 'How can we help you today?',
+          lastMessageTime: new Date().toISOString(),
+          unreadCount: 0
+        }
+      ];
+      res.json(chatRooms);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch chat rooms" });
+    }
+  });
+
+  app.get("/api/messages/:chatId", async (req, res) => {
+    try {
+      const { chatId } = req.params;
+      const messages = [
+        {
+          id: '1',
+          chatId: chatId,
+          senderId: 'support',
+          content: 'Hello! How can we help you today?',
+          timestamp: new Date().toISOString(),
+          isRead: true
+        }
+      ];
+      res.json(messages);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch messages" });
+    }
+  });
+
+  // Recommendations
+  app.get("/api/recommendations/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const recommendations = {
+        trending: [
+          { id: '1', name: 'Masala Dosa', restaurant: 'South Express', rating: 4.6 }
+        ],
+        personalized: [
+          { id: '2', name: 'Paneer Butter Masala', restaurant: 'Canteen Delight', rating: 4.5 }
+        ],
+        nearby: [
+          { id: '3', name: 'Quick Bites Burger', restaurant: 'Quick Bites Cafe', rating: 4.2 }
+        ]
+      };
+      res.json(recommendations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch recommendations" });
     }
   });
 

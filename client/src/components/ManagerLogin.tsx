@@ -26,7 +26,7 @@ export default function ManagerLogin() {
   const form = useForm<ManagerLoginForm>({
     resolver: zodResolver(managerLoginSchema),
     defaultValues: {
-      username: 'manager@spicegarden.com',
+      username: 'manager@canteendelight.com',
       password: 'password123',
     },
   });
@@ -34,18 +34,11 @@ export default function ManagerLogin() {
   const onSubmit = async (data: ManagerLoginForm) => {
     setIsLoading(true);
     try {
-      const response = await apiRequest('POST', '/api/auth/manager/login', data);
-      const result = await response.json();
-
-      if (result.success) {
-        login(result.manager as Manager, 'manager');
-        toast({
-          title: 'Login Successful',
-          description: `Welcome back, ${result.manager.restaurantName}!`,
-        });
-      } else {
-        throw new Error(result.error || 'Login failed');
-      }
+      await login(data.username, data.password, 'manager');
+      toast({
+        title: 'Login Successful',
+        description: `Welcome back!`,
+      });
     } catch (error: any) {
       toast({
         variant: 'destructive',
@@ -58,60 +51,72 @@ export default function ManagerLogin() {
   };
 
   return (
-    <div className="max-w-md mx-auto">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">Manager Login</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div>
-              <Label htmlFor="username">Manager Email</Label>
-              <Input
-                {...form.register('username')}
-                type="email"
-                placeholder="manager@restaurant.com"
-                data-testid="input-manager-email"
-              />
-              {form.formState.errors.username && (
-                <p className="text-sm text-destructive mt-1">
-                  {form.formState.errors.username.message}
-                </p>
-              )}
-            </div>
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <div>
+        <Label htmlFor="username">Manager Email</Label>
+        <Input
+          {...form.register('username')}
+          type="email"
+          placeholder="manager@restaurant.com"
+          data-testid="input-manager-email"
+          autoComplete="email"
+        />
+        {form.formState.errors.username && (
+          <p className="text-sm text-destructive mt-1">
+            {form.formState.errors.username.message}
+          </p>
+        )}
+      </div>
 
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                {...form.register('password')}
-                type="password"
-                placeholder="Enter password"
-                data-testid="input-password"
-              />
-              {form.formState.errors.password && (
-                <p className="text-sm text-destructive mt-1">
-                  {form.formState.errors.password.message}
-                </p>
-              )}
-            </div>
+      <div>
+        <Label htmlFor="password">Password</Label>
+        <Input
+          {...form.register('password')}
+          type="password"
+          placeholder="Enter password"
+          data-testid="input-password"
+          autoComplete="current-password"
+        />
+        {form.formState.errors.password && (
+          <p className="text-sm text-destructive mt-1">
+            {form.formState.errors.password.message}
+          </p>
+        )}
+      </div>
 
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={isLoading}
-              data-testid="button-manager-login"
-            >
-              {isLoading ? 'Logging in...' : 'Login as Manager'}
-            </Button>
+      <Button 
+        type="submit" 
+        className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 transition-all duration-200 hover:scale-[1.02] shadow-lg hover:shadow-xl" 
+        disabled={isLoading}
+        data-testid="button-manager-login"
+      >
+        {isLoading ? (
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin"></div>
+            Logging in...
+          </div>
+        ) : (
+          'Login as Manager'
+        )}
+      </Button>
 
-            <div className="text-center text-xs text-muted-foreground mt-4">
-              <p>Demo credentials:</p>
-              <p>Email: manager@spicegarden.com</p>
-              <p>Password: password123</p>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t border-muted-foreground/20" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Demo Access</span>
+        </div>
+      </div>
+
+      <div className="text-center p-3 bg-muted/30 rounded-lg border border-muted-foreground/10">
+        <p className="text-sm font-medium text-foreground mb-1">Pre-filled Demo Credentials:</p>
+        <div className="text-xs text-muted-foreground space-y-1">
+          <p><span className="font-medium">Email:</span> manager@canteendelight.com</p>
+          <p><span className="font-medium">Password:</span> password123</p>
+        </div>
+        <p className="text-xs text-muted-foreground/80 mt-2">Just click "Login as Manager" above!</p>
+      </div>
+    </form>
   );
 }

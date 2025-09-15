@@ -5,20 +5,27 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'automatic',
+      jsxImportSource: 'react'
+    }),
     runtimeErrorOverlay(),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
+          import("@replit/vite-plugin-cartographer").then((m) =>
             m.cartographer(),
           ),
-          await import("@replit/vite-plugin-dev-banner").then((m) =>
+          import("@replit/vite-plugin-dev-banner").then((m) =>
             m.devBanner(),
           ),
         ]
       : []),
   ],
+  esbuild: {
+    jsx: 'automatic',
+    jsxImportSource: 'react'
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
@@ -32,9 +39,24 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    fs: {
-      strict: true,
-      deny: ["**/.*"],
+    port: 5000,
+    host: true,
+    hmr: {
+      port: 5000,
+      host: 'localhost',
+      overlay: false
     },
+    fs: {
+      strict: false,
+      allow: ['..']
+    },
+    watch: {
+      usePolling: false,
+      ignored: [
+        '**/node_modules/@mui/icons-material/**',
+        '**/node_modules/.vite/**'
+      ]
+    }
   },
+  envPrefix: 'VITE_',
 });

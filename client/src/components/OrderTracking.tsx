@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import GoogleMap from './GoogleMap';
+import { CheckCircle, Receipt, Clock as AccessTime, Store as RestaurantIcon, Truck as LocalShipping, Home, Map, Store as DineIn, ShoppingBag } from 'lucide-react';
 import type { Order } from '@/types';
 
 interface OrderTrackingProps {
@@ -10,12 +11,12 @@ interface OrderTrackingProps {
 }
 
 const orderStatuses = [
-  { key: 'placed', label: 'Order Placed', icon: 'fa-receipt', color: 'text-chart-1' },
-  { key: 'confirmed', label: 'Order Confirmed', icon: 'fa-check-circle', color: 'text-chart-2' },
-  { key: 'preparing', label: 'Preparing Order', icon: 'fa-clock', color: 'text-chart-3' },
-  { key: 'ready', label: 'Order Ready', icon: 'fa-utensils', color: 'text-chart-2' },
-  { key: 'dispatched', label: 'Out for Delivery', icon: 'fa-truck', color: 'text-chart-1' },
-  { key: 'delivered', label: 'Delivered', icon: 'fa-home', color: 'text-chart-2' }
+  { key: 'placed', label: 'Order Placed', icon: Receipt, color: 'text-chart-1' },
+  { key: 'confirmed', label: 'Order Confirmed', icon: CheckCircle, color: 'text-chart-2' },
+  { key: 'preparing', label: 'Preparing Order', icon: AccessTime, color: 'text-chart-3' },
+  { key: 'ready', label: 'Order Ready', icon: RestaurantIcon, color: 'text-chart-2' },
+  { key: 'dispatched', label: 'Out for Delivery', icon: LocalShipping, color: 'text-chart-1' },
+  { key: 'delivered', label: 'Delivered', icon: Home, color: 'text-chart-2' }
 ];
 
 export default function OrderTracking({ order }: OrderTrackingProps) {
@@ -107,7 +108,7 @@ export default function OrderTracking({ order }: OrderTrackingProps) {
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-chart-2/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <i className="fas fa-check text-2xl text-chart-2"></i>
+          <CheckCircle className="text-2xl text-chart-2" />
         </div>
         <h2 className="text-2xl font-bold text-foreground mb-2">Order Confirmed!</h2>
         <p className="text-muted-foreground">
@@ -136,7 +137,7 @@ export default function OrderTracking({ order }: OrderTrackingProps) {
                         ? 'bg-chart-3 text-white'
                         : 'bg-muted text-muted-foreground'
                     }`}>
-                      <i className={`fas ${status.icon} text-sm`}></i>
+                      <status.icon className="text-sm" />
                     </div>
                     <div className="flex-1">
                       <h4 className={`font-medium ${
@@ -174,7 +175,7 @@ export default function OrderTracking({ order }: OrderTrackingProps) {
               <>
                 <div className="bg-muted h-64 rounded-lg flex items-center justify-center mb-4" data-testid="delivery-map">
                   <div className="text-center">
-                    <i className="fas fa-map-marked-alt text-4xl text-muted-foreground mb-2"></i>
+                    <Map className="text-4xl text-muted-foreground mb-2 mx-auto" />
                     <p className="text-muted-foreground font-medium">Live Delivery Tracking</p>
                     <p className="text-sm text-muted-foreground">Real-time location updates</p>
                   </div>
@@ -198,9 +199,11 @@ export default function OrderTracking({ order }: OrderTrackingProps) {
             ) : (
               <div className="space-y-4">
                 <div className="text-center py-8">
-                  <i className={`fas ${
-                    order.orderType === 'dine-in' ? 'fa-utensils' : 'fa-shopping-bag'
-                  } text-4xl text-muted-foreground mb-4`}></i>
+                  {order.orderType === 'dine-in' ? (
+                    <DineIn className="text-4xl text-muted-foreground mb-4 mx-auto" />
+                  ) : (
+                    <ShoppingBag className="text-4xl text-muted-foreground mb-4 mx-auto" />
+                  )}
                   <h3 className="text-lg font-semibold text-foreground mb-2">
                     {order.orderType === 'dine-in' ? 'Dine-in Order' : 'Takeaway Order'}
                   </h3>

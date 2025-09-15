@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { ShoppingCart, Truck as LocalShipping, Store as RestaurantIcon, ShoppingBag } from 'lucide-react';
 import type { CartItem, Restaurant } from '@/types';
 
 interface CartProps {
@@ -50,7 +51,7 @@ const Cart = memo(function Cart({ cart, restaurant, onUpdateCart, onProceedToPay
   if (cart.length === 0) {
     return (
       <div className="text-center py-12">
-        <i className="fas fa-shopping-cart text-4xl text-muted-foreground mb-4"></i>
+        <ShoppingCart className="text-4xl text-muted-foreground mb-4 mx-auto" />
         <h3 className="text-lg font-semibold text-foreground mb-2">Your cart is empty</h3>
         <p className="text-muted-foreground">Add some delicious items to get started!</p>
       </div>
@@ -144,7 +145,7 @@ const Cart = memo(function Cart({ cart, restaurant, onUpdateCart, onProceedToPay
                     data-testid="label-delivery-option"
                   >
                     <RadioGroupItem value="delivery" id="delivery" className="sr-only" />
-                    <i className="fas fa-truck text-2xl mb-2"></i>
+                    <LocalShipping className="text-2xl mb-2" />
                     <span className="font-medium">Delivery</span>
                     <span className="text-xs text-muted-foreground">+₹25</span>
                   </Label>
@@ -156,7 +157,7 @@ const Cart = memo(function Cart({ cart, restaurant, onUpdateCart, onProceedToPay
                     data-testid="label-dinein-option"
                   >
                     <RadioGroupItem value="dine-in" id="dine-in" className="sr-only" />
-                    <i className="fas fa-utensils text-2xl mb-2"></i>
+                    <RestaurantIcon className="text-2xl mb-2" />
                     <span className="font-medium">Dine-in</span>
                     <span className="text-xs text-muted-foreground">Free</span>
                   </Label>
@@ -168,7 +169,7 @@ const Cart = memo(function Cart({ cart, restaurant, onUpdateCart, onProceedToPay
                     data-testid="label-takeaway-option"
                   >
                     <RadioGroupItem value="takeaway" id="takeaway" className="sr-only" />
-                    <i className="fas fa-shopping-bag text-2xl mb-2"></i>
+                    <ShoppingBag className="text-2xl mb-2" />
                     <span className="font-medium">Takeaway</span>
                     <span className="text-xs text-muted-foreground">Free</span>
                   </Label>
